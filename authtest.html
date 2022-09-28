@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>authtest</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#authtest" title="authtest"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="authtest" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>authtest — Test the Courier Authentication Library</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">authtest</code>  {loginid} [password] [newpassword]</p></div></div><div class="refsect1"><a id="authtest_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<span class="command"><strong>authtest</strong></span> is a command-line diagnostic utility for the
+Courier Authentication Library.
+<span class="command"><strong>authtest</strong></span> requires at least one argument:
+<em class="replaceable"><code>loginid</code></em>.
+<span class="command"><strong>authtest</strong></span> sends the authentication request to the
+Courier Authentication Library, then displays the results.
+Only root may use
+<span class="command"><strong>authtest</strong></span> utility, and the
+Courier Authentication Library daemon
+(<span class="command"><strong>authdaemond</strong></span>) must already be started.</p><p>
+If only one argument is provided, the authentication request displays the
+account information for <em class="replaceable"><code>loginid</code></em>, if found.</p><p>
+If two arguments are provided,
+<em class="replaceable"><code>password</code></em> must match
+<em class="replaceable"><code>loginid</code></em>'s
+existing password.</p><p>
+If three arguments are provided,
+<em class="replaceable"><code>loginid</code></em>'s password is changed to
+<em class="replaceable"><code>newpassword</code></em>, but only if
+<em class="replaceable"><code>password</code></em> matches the existing password.</p><p>
+These three basic authentication requests can be used to troubleshoot
+the authentication library's configuration.</p></div></div></body></html>

@@ -1,0 +1,14 @@
+
+
+
+
+/usr/lib/courier-authlib/libauthuserdb.so*
+/usr/sbin/makeuserdb
+/usr/sbin/pw2userdb
+/usr/sbin/userdb
+/usr/sbin/userdb-test-cram-md5
+/usr/sbin/userdbpw
+/usr/share/man/man8/makeuserdb.8
+/usr/share/man/man8/pw2userdb.8
+/usr/share/man/man8/userdb.8
+/usr/share/man/man8/userdbpw.8

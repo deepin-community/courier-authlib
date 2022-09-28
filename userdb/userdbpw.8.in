@@ -1,0 +1,147 @@
+'\" t
+.\"  <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: userdbpw
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "USERDBPW" "8" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+userdbpw \- create an encrypted password
+.SH "SYNOPSIS"
+.HP \w'\fBuserdbpw\fR\fBuserdb\fR\ 'u
+\fBuserdbpw\fR [[\-md5] | [\-hmac\-md5] | [\-hmac\-sha1]] |\fBuserdb\fR {\fIname\fR} set {\fIfield\fR}
+.SH "DESCRIPTION"
+.PP
+\fBuserdbpw\fR
+enables secure entry of encrypted passwords into
+@userdb@\&.
+.PP
+\fBuserdbpw\fR
+reads a single line of text on standard input, encrypts it, and prints the encrypted result to standard output\&.
+.PP
+If standard input is attached to a terminal device,
+\fBuserdbpw\fR
+explicitly issues a "Password: " prompt on standard error, and turns off echo while the password is entered\&.
+.PP
+The
+\fB\-md5\fR
+option is available on systems that use MD5\-hashed passwords (such as systems that use the current version of the PAM library for authenticating, with MD5 passwords enabled)\&. This option creates an MD5 password hash, instead of using the traditional
+\fBcrypt()\fR
+function\&.
+.PP
+\fB\-hmac\-md5\fR
+and
+\fB\-hmac\-sha1\fR
+options are available only if the userdb library is installed by an application that uses a challenge/response authentication mechanism\&.
+\fB\-hmac\-md5\fR
+creates an intermediate HMAC context using the MD5 hash function\&.
+\fB\-hmac\-sha1\fR
+uses the SHA1 hash function instead\&. Whether either HMAC function is actually available depends on the actual application that installs the
+\fBuserdb\fR
+library\&.
+.PP
+Note that even though the result of HMAC hashing looks like an encrypted password, it\*(Aqs really not\&. HMAC\-based challenge/response authentication mechanisms require the cleartext password to be available as cleartext\&. Computing an intermediate HMAC context does scramble the cleartext password, however if its compromised, it WILL be possible for an attacker to succesfully authenticate\&. Therefore, applications that use challenge/response authentication will store intermediate HMAC contexts in the "pw" fields in the userdb database, which will be compiled into the
+userdbshadow\&.dat
+database, which has group and world permissions turned off\&. The userdb library also requires that the cleartext userdb source for the
+userdb\&.dat
+and
+userdbshadow\&.dat
+databases is also stored with the group and world permissions turned off\&.
+.PP
+\fBuserdbpw\fR
+is usually used together in a pipe with
+\fBuserdb\fR, which reads from standard input\&. For example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fBuserdbpw \-md5 | userdb users/john set systempw\fR
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+or:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fBuserdbpw \-hmac\-md5 | userdb users/john set hmac\-md5pw\fR
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+These commands set the
+\fBsystempw\fR
+field in the record for the user
+\fBjohn\fR
+in
+@userdb@/users
+file, and the
+\fBhmac\-md5pw\fR
+field\&. Don\*(Aqt forget to run
+\fBmakeuserdb\fR
+for the change to take effect\&.
+.PP
+The following command does the same thing:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fBuserdb users/john set systempw=\fR\fB\fBSECRETPASSWORD\fR\fR
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+However, this command passes the secret password as an argument to the
+\fBuserdb\fR
+command, which can be viewed by anyone who happens to run
+\fBps\fR(1)
+at the same time\&. Using
+\fBuserdbpw\fR
+allows the secret password to be specified in a way that cannot be easily viewed by
+\fBps\fR(1)\&.
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[2]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+\fBuserdb\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/userdb.html
+.RE
+.IP " 2." 4
+\fBmakeuserdb\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/makeuserdb.html
+.RE

@@ -1,0 +1,113 @@
+'\" t
+.\"  <!-- Copyright 2004-2015 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: authlib
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTHLIB" "3" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+authlib \- Courier Authentication Library
+.SH "SYNOPSIS"
+.HP \w'\fBcourierauthconfig\fR\ 'u
+\fBcourierauthconfig\fR [[\-\-ldflags] | [\-\-cppflags]]
+.SH "DESCRIPTION"
+.PP
+The Courier authentication library consists of two libraries:
+.PP
+\-lcourierauth
+.RS 4
+Authentication functions\&.
+.RE
+.PP
+\-lcourierauthsasl
+.RS 4
+SASL authentication functions\&.
+.RE
+.PP
+\fBcourierauthconfig \-\-cppflags\fR
+produces on standard output any necessary compiler flags that are needed to access the
+courierauth\&.h
+and the
+courierauthsasl\&.h
+header files\&.
+\fBcourierauthconfig \-\-ldflags\fR
+produces on standard output any necessary compiler flags that are needed to link against the
+courierauth
+or
+courierauthsasl
+libraries\&.
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBauth_meta\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fB\fBauth_generic_meta\fR(3)\fR\m[]\&\s-2\u[2]\d\s+2,
+\m[blue]\fB\fBauth_login_meta\fR(3)\fR\m[]\&\s-2\u[3]\d\s+2,
+\m[blue]\fB\fBauth_getuserinfo_meta\fR(3)\fR\m[]\&\s-2\u[4]\d\s+2,
+\m[blue]\fB\fBauth_enumerate\fR(3)\fR\m[]\&\s-2\u[5]\d\s+2,
+\m[blue]\fB\fBauth_mkhomedir\fR(3)\fR\m[]\&\s-2\u[6]\d\s+2,
+\m[blue]\fB\fBauth_passwd\fR(3)\fR\m[]\&\s-2\u[7]\d\s+2,
+\m[blue]\fB\fBauth_sasl\fR(3)\fR\m[]\&\s-2\u[8]\d\s+2\&.
+.SH "NOTES"
+.IP " 1." 4
+\fBauth_meta\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_meta.html
+.RE
+.IP " 2." 4
+\fBauth_generic_meta\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_generic.html
+.RE
+.IP " 3." 4
+\fBauth_login_meta\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_login.html
+.RE
+.IP " 4." 4
+\fBauth_getuserinfo_meta\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_getuserinfo.html
+.RE
+.IP " 5." 4
+\fBauth_enumerate\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_enumerate.html
+.RE
+.IP " 6." 4
+\fBauth_mkhomedir\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_mkhomedir.html
+.RE
+.IP " 7." 4
+\fBauth_passwd\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_passwd.html
+.RE
+.IP " 8." 4
+\fBauth_sasl\fR(3)
+.RS 4
+\%[set $man.base.url.for.relative.links]/auth_sasl.html
+.RE

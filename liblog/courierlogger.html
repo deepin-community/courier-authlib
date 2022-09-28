@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>courierlogger</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#courierlogger" title="courierlogger"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="courierlogger" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>courierlogger — Courier syslog wrapper</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">courierlogger</code>  [-name=<em class="replaceable"><code>title</code></em>] [-facility=<em class="replaceable"><code>subsystem</code></em>] [-pid=<em class="replaceable"><code>filename</code></em>] [-user=<em class="replaceable"><code>user</code></em>] [-group=<em class="replaceable"><code>group</code></em>] [-droproot] [[[-respawn]  [-start]
+             <em class="replaceable"><code>program</code></em>  [argument...]] |  [-stop] |  [-restart]]</p></div></div><div class="refsect1"><a id="courierlogger_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<span class="command"><strong>courierlogger</strong></span>
+is a wrapper that captures
+another process's error messages, and forwards them
+to the system logging facility,
+<span class="quote">“<span class="quote">syslog</span>”</span>.</p><p>
+There are two ways to use courierlogger:
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+Use the shell to pipe another command's standard error, and/or its standard
+output, to
+<span class="command"><strong>courierlogger</strong></span>'s standard input.</p></li><li class="listitem"><p>
+Alternatively,
+<span class="command"><strong>courierlogger</strong></span>
+itself can start another process, and arrange to have its standard error
+captured.</p></li></ol></div><p>
+    </p><p>
+In either case, each read line of text is sent as a syslog message.</p></div><div class="refsect1"><a id="courierlogger_options" shape="rect"> </a><h2>OPTIONS</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">-name=<em class="replaceable"><code>title</code></em></span></dt><dd><p>
+Use <em class="replaceable"><code>title</code></em> for sending messages to syslog.
+<em class="replaceable"><code>title</code></em> should be the application's name.</p></dd><dt><span class="term">-facility=<em class="replaceable"><code>subsystem</code></em></span></dt><dd><p>
+Use <em class="replaceable"><code>subsystem</code></em> for classifying messages.
+Your syslog facility uses <em class="replaceable"><code>subsystem</code></em> to determine
+which log messages are recorded in which log files.
+The currently defined subsystems are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">auth</code></p></li><li class="listitem"><p><code class="literal">authpriv</code></p></li><li class="listitem"><p><code class="literal">console</code></p></li><li class="listitem"><p><code class="literal">cron</code></p></li><li class="listitem"><p><code class="literal">daemon</code></p></li><li class="listitem"><p><code class="literal">ftp</code></p></li><li class="listitem"><p><code class="literal">kern</code></p></li><li class="listitem"><p><code class="literal">lpr</code></p></li><li class="listitem"><p><code class="literal">mail</code></p></li><li class="listitem"><p><code class="literal">news</code></p></li><li class="listitem"><p><code class="literal">security</code></p></li><li class="listitem"><p><code class="literal">user</code></p></li><li class="listitem"><p><code class="literal">uucp</code></p></li><li class="listitem"><p><code class="literal">local0</code></p></li><li class="listitem"><p><code class="literal">local1</code></p></li><li class="listitem"><p><code class="literal">local2</code></p></li><li class="listitem"><p><code class="literal">local3</code></p></li><li class="listitem"><p><code class="literal">local4</code></p></li><li class="listitem"><p><code class="literal">local5</code></p></li><li class="listitem"><p><code class="literal">local6</code></p></li><li class="listitem"><p><code class="literal">local7</code></p></li></ul></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+Not all of the above facility names are implemented on every system.
+Check your system's syslog documentation for information on which facility
+names are allowed, and which log files record the corresponding messages
+for each facility.</p></div></dd><dt><span class="term">-pid=<em class="replaceable"><code>filename</code></em></span></dt><dd><p>
+Save <span class="command"><strong>courierlogger</strong></span>'s
+process ID in <em class="replaceable"><code>filename</code></em>.
+The <em class="parameter"><code>-pid</code></em> option is required when
+<em class="parameter"><code>-start</code></em>,
+<em class="parameter"><code>-stop</code></em>,
+<em class="parameter"><code>-restart</code></em> are given. If <em class="parameter"><code>-pid</code></em>
+is given without any of these, <em class="parameter"><code>-start</code></em> is assumed.</p></dd><dt><span class="term">-start</span></dt><dd><p>
+Run as a daemon. The <code class="option">pid</code> option is required.
+<span class="command"><strong>courierlogger</strong></span> will quietly terminate if another
+<span class="command"><strong>courierlogger</strong></span> process is already running.
+This is used to make sure that only one instance of
+<code class="filename">program</code> is running at the same time.
+Specify a different filename with <code class="option">pid</code> to start a second
+copy of <code class="filename">program</code>.</p></dd><dt><span class="term">-respawn</span></dt><dd><p>
+Restart <code class="filename">program</code> if it terminates.
+Normally
+<span class="command"><strong>courierlogger</strong></span> itself will terminate when
+<code class="filename">program</code> finishes running.
+Use <code class="option">respawn</code> to restart it instead.</p></dd><dt><span class="term">-restart</span></dt><dd><p>
+Send a <code class="literal">SIGHUP</code> signal to the courierlogger process
+(as determined by examining the contents of the file specified by
+<code class="option">pid</code>), which will in turn send a <code class="literal">SIGHUP</code>
+to its child <code class="filename">program</code>.
+Does nothing if courierlogger is not running.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+<code class="filename">program</code> must be originally started with the
+<code class="option">respawn</code> option if sending it a <code class="literal">SIGHUP</code>
+causes it to terminate.</p></div><p>
+The same thing may be accomplished by sending <code class="literal">SIGHUP</code>
+to <span class="command"><strong>courierlogger</strong></span> itself.</p></dd><dt><span class="term">-stop</span></dt><dd><p>
+Send a <code class="literal">SIGTERM</code> signal to courierlogger, which in turn
+forwards it on to <code class="filename">program</code>.
+If <code class="filename">program</code> does not terminate in 8 seconds, kill it
+with <code class="literal">SIGKILL</code>.</p></dd><dt><span class="term">-user=<em class="replaceable"><code>user</code></em>, -group=<em class="replaceable"><code>group</code></em></span></dt><dd><p>
+If running as root, change credentials to the given user and/or group, which
+may be given as names or numeric ids.</p><p>When running a child program, it is started
+<span class="emphasis"><em>before</em></span> privileges are dropped
+(unless the <code class="option">-droproot</code> option is also given).
+This gives a means of
+starting a child as root so it can bind to a privileged port, but still have
+courierlogger run as a non-root user. For the <code class="option">-stop</code> and
+<code class="option">-restart</code> options to work, you should configure the child
+program to drop its privileges to the same userid too.</p></dd><dt><span class="term">-droproot</span></dt><dd><p>
+Drop root privileges before starting the child process.
+The <code class="option">-user</code> and <code class="option">-group</code> options specify
+the non-privileges userid and groupid.
+Without the <code class="option">-droproot</code> option the child process remains
+a root process, and only the parent <span class="command"><strong>courierlogger</strong></span>
+process drops root privileges.</p></dd><dt><span class="term"><em class="replaceable"><code>program</code></em> [ argument ] ... </span></dt><dd><p>
+If a program is given <code class="filename">program</code>
+will be started as a child process of
+<span class="command"><strong>courierlogger</strong></span>, capturing its standard error.
+Otherwise, <span class="command"><strong>courierlogger</strong></span>
+reads message from standard input, and automatically terminates when
+standard input is closed.</p></dd></dl></div></div><div class="refsect1"><a id="courierlogger_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="couriertcpd.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">couriertcpd</span>(1)</span></a>, your syslog man page.</p></div></div></body></html>

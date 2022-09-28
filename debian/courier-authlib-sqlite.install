@@ -1,0 +1,2 @@
+/etc/courier/authsqliterc
+/usr/lib/courier-authlib/libauthsqlite.so*

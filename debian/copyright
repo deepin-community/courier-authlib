@@ -1,0 +1,57 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: courier-authlib
+Upstream-Contact: Sam Varshavchik <mrsam@courier-mta.com>
+Source: http://www.courier-mta.org/
+
+Files: *
+Copyright: 2004 - 2019 Double Precision, Inc.
+License: GPL-3+OpenSSL-exception
+
+Files: authcustom.h
+ authldap.h
+Copyright: 1999 Luc Saillard <luc.saillard@alcove.fr>
+License: GPL-2+
+Comment:
+ Sam Varshavchik said:
+ > There's been quite a few changes since Luc's original version. I
+ > believe what makes sense is to preserve the revision history, but
+ > simply reference the main COPYING file.
+
+Files: debian/*
+Copyright: 2004-2015 Stefan Hornburg (Racke) <racke@linuxia.de>
+	   2015      Ondřej Surý <ondrej@debian.org>
+	   2017-2019 Markus Wanner <markus@bluegap.ch>
+License: GPL-3+OpenSSL-exception
+
+License: GPL-3+OpenSSL-exception
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or (at
+ your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
+ .
+ A copy of the GNU General Public License is available as
+ /usr/share/common-licenses/GPL-3 in the Debian GNU/Linux
+ distribution.
+ .
+ Additionally, compiling, linking, and/or using the OpenSSL toolkit in
+ conjunction with this software is allowed.
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or (at
+ your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
+ .
+ A copy of the GNU General Public License is available as
+ /usr/share/common-licenses/GPL-2 in the Debian GNU/Linux
+ distribution.

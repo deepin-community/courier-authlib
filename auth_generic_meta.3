@@ -1,0 +1,414 @@
+'\" t
+.\"  <!-- Copyright 2004-2020 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: auth_generic_meta
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTH_GENERIC_META" "3" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+auth_generic_meta, auth_generic \- Generic authentication request
+.SH "SYNOPSIS"
+.sp
+.nf
+#include <courierauth\&.h>
+.fi
+.HP \w'int\ rc=auth_generic_meta('u
+.BI "int rc=auth_generic_meta(struct\ auth_meta\ *" "meta" ", const\ char\ *" "service" ", const\ char\ *" "authtype" ", const\ char\ *" "authdata" ", int\ " "(*callback_func)" "\ (struct\ authinfo\ *,\ void\ *), void\ *" "callback_arg" ");"
+.HP \w'int\ rc=auth_generic('u
+.BI "int rc=auth_generic(const\ char\ *" "service" ", const\ char\ *" "authtype" ", const\ char\ *" "authdata" ", int\ " "(*callback_func)" "\ (struct\ authinfo\ *,\ void\ *), void\ *" "callback_arg" ");"
+.SH "DESCRIPTION"
+.PP
+\fBauth_generic_meta\fR
+processes a generic authentication request\&. You do not want to use this function by itself\&. You really want to use
+\m[blue]\fB\fBauth_login_meta\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2\&.
+\fIservice\fR
+specifies which so\-called "service" is being authenticated; like
+\(lqimap\(rq
+or
+\(lqpop3\(rq\&.
+\fIservice\fR
+may or may not be used by the Courier authentication library\*(Aqs configured back\-end module\&.
+.PP
+\fBauthtype\fR
+specifies the format of the authentication request\&. Three authentication formats are defined in
+courierauth\&.h:
+.PP
+AUTHTYPE_LOGIN
+.RS 4
+\fIauthdata\fR
+contains the following string:
+\(lq\fIuserid\fR\en\fIpassword\fR\en\(rq\&. That is, the userid being authenticated, an
+ASCII
+newline character, the password, and a second newline character\&.
+.RE
+.PP
+AUTHTYPE_CRAMMD5 or AUTHTYPE_CRAMSHA1
+.RS 4
+This format is used with
+CRAM\-MD5
+or
+CRAM\-SHA1\&.
+\fIauthdata\fR
+contains the following string:
+\(lq\fIchallenge\fR\en\fIresponse\fR\en\(rq\&.
+\fIchallenge\fR
+is the base64\-encoded challenge, which is followed by an
+ASCII
+newline character\&.
+\fIresponse\fR
+is a base64\-encoded string that\*(Aqs followed by a second newline character\&. The base64\-encoded string consists of the responding userid, a space character, then the response to the challenge expressed as hexadecimal digits\&.
+.RE
+.PP
+A NULL
+\fImeta\fR
+is equivalent to using the default
+auth_meta
+returned by
+\m[blue]\fB\fBauth_meta_init_default\fR(3)\fR\m[]\&\s-2\u[2]\d\s+2\&.
+.PP
+\fBauth_generic_meta\fR() should not be used by itself, but only together with
+\m[blue]\fB\fBauth_sasl_ex\fR(3)\fR\m[]\&\s-2\u[3]\d\s+2\&.
+.PP
+\fBauth_generic\fR() is deprecated and should not be used in new code\&.
+.SH "RETURNS"
+.PP
+\fBcallback_func\fR
+will be invoked if
+\fBauth_generic_meta\fR
+succeeds, and
+\fBcallback_func\fR\*(Aqs return value becomes the return value from
+\fBauth_generic_meta\fR
+(which should be 0, by convention)\&.
+\fBcallback_func\fR
+will not be invoked if an error occurs, which is reported by a non\-zero return value from
+\fBauth_generic_meta\fR\&. By convention, a positive return value indicates an internal, temporary failure, such as the authentication daemon process not running; a negative return value indicates that this request was processed, but it failed\&.
+.PP
+The second argument to
+\fBcallback_func\fR
+will be
+\fBcallback_arg\fR, which is not interpreted by this function in any way\&. The first argument will be a pointer to the following structure:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+struct authinfo {
+	const char *sysusername;
+	const uid_t *sysuserid;
+	gid_t sysgroupid;
+	const char *homedir;
+
+	const char *address;
+	const char *fullname;
+	const char *maildir;
+	const char *quota;
+	const char *passwd;
+	const char *clearpasswd;
+
+	const char *options;
+
+	} ;
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Description of the above fields:
+.PP
+address
+.RS 4
+The authenticated login ID\&.
+.RE
+.PP
+sysusername
+.RS 4
+The authenticated account\*(Aqs userid and groupid can be looked up in the password file using
+address\&. If this field is
+NULL, obtain the userid and the groupid from
+sysuserid
+and
+sysgroupid\&.
+.RE
+.PP
+sysuserid
+.RS 4
+sysuserid
+may be
+NULL
+if
+sysusername
+is initialized, otherwise it\*(Aqs a pointer to the account\*(Aqs numeric userid\&.
+.RE
+.PP
+sysgroupid
+.RS 4
+Account\*(Aqs numeric groupid\&.
+sysgroupid
+is only used when
+sysusername
+is
+NULL\&.
+.RE
+.PP
+fullname
+.RS 4
+This is the account\*(Aqs full name\&. This field is optional, it may be
+NULL\&.
+.RE
+.PP
+homedir
+.RS 4
+The account\*(Aqs home directory\&. This field cannot be
+NULL\&.
+.RE
+.PP
+maildir
+.RS 4
+The pathname to the account\*(Aqs mailbox\&. This field is optional, it can be
+NULL
+in which case the default location is assumed\&.
+.RE
+.PP
+quota
+.RS 4
+Optional maildir quota on the account\*(Aqs mailbox (and
+NULL
+if no quota is set)\&.
+.RE
+.PP
+passwd
+.RS 4
+The account\*(Aqs encrypted password, if available\&. If the account has a cleartext password defined, this field can be set to
+NULL\&. The encrypted password can take several formats:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A traditional triple\-DES crypted password, or a MD5+salt\-hashed password, as used in Linux\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\(lq{MD5}\(rq
+followed by a base64\-encoded MD5 hash of the password\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\(lq{SHA}\(rq
+followed by a base64\-encoded SHA1 hash of the password\&.
+.RE
+.RE
+.PP
+clearpasswd
+.RS 4
+The account\*(Aqs cleartext password, if available\&. If the account has an encrypted password defined, this field can be set to
+NULL\&.
+.RE
+.PP
+options
+.RS 4
+A comma\-separated list of miscellaneous account options\&. See below for more information\&.
+.RE
+.SS "Account options"
+.PP
+Depending on the configuration of the Courier authentication library, accounts may have individual options associated with them\&. If the authentication library configuration does not implement account options, the option string will be a
+NULL
+value\&. Otherwise it will be a comma\-separated list of
+\(lq\fIoption\fR=\fIvalue\fR\(rq
+settings\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+.PP
+The application is responsible for actually implementing the options\&. For example, sn authentication request for service
+\(lqimap\(rq, for example, will succeed provided that the userid and the password are valid, even if
+\(lqdisableimap=1\(rq
+is set\&. The application\*(Aqs
+\fBcallback_func\fR
+should check for this condition, and return a negative return code\&.
+.sp .5v
+.RE
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+.PP
+The following list of account options is a combined list of implemented options supported by Courier, Courier\-IMAP, and SqWebMail packages\&. Some of the following information is obviously not applicable for a particular package\&. The inapplicable bits should be obvious\&.
+.sp .5v
+.RE
+.PP
+The following options are recognized by the various Courier packages:
+.PP
+disableimap=\fIn\fR
+.RS 4
+If "n" is 1, IMAP access to this account should be disabled\&.
+.RE
+.PP
+disablepop3=\fIn\fR
+.RS 4
+If "n" is 1, POP3 access to this account should be disabled\&.
+.RE
+.PP
+disableinsecureimap=\fIn\fR
+.RS 4
+If "n" is 1, unencrypted IMAP access to this account should be disabled\&.
+.RE
+.PP
+disableinsecurepop3=\fIn\fR
+.RS 4
+If "n" is 1, unencrypted POP3 access to this account should be disabled\&.
+.RE
+.PP
+disablewebmail=\fIn\fR
+.RS 4
+If "n" is 1, webmail access to this account should be disabled\&.
+.RE
+.PP
+disableshared=\fIn\fR
+.RS 4
+If "n" is 1, this account should not have access to shared folders or be able to share its own folders with other people\&.
+.RE
+.PP
+group=\fIname\fR
+.RS 4
+This option is used by Courier\-IMAP in calculating access control lists\&. This option places the account as a member of access group
+\fIname\fR\&. Instead of granting access rights on individual mail folders to individual accounts, the access rights can be granted to an access group
+\(lqname\(rq, and all members of this group get the specified access rights\&.
+.sp
+The access group name
+\(lqadministrators\(rq
+is a reserved group\&. All accounts in the
+administrators
+group automatically receive all rights to all accessible folders\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+This option may be specified multiple times to specify that the account belongs to multiple account groups\&.
+.sp .5v
+.RE
+.RE
+.PP
+sharedgroup=\fIname\fR
+.RS 4
+Another option used by Courier\-IMAP\&. Append "name" to the name of the top level virtual shared folder index file\&. This setting restricts which virtual shared folders this account could possibly access (and that\*(Aqs on top of whatever else the access control lists say)\&. See the virtual shared folder documentation for more information\&.
+.sp
+For technical reasons, group names may not include comma, tab, "/" or "|" characters\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBauthlib\fR(3)\fR\m[]\&\s-2\u[4]\d\s+2,
+\m[blue]\fB\fBauth_meta\fR(3)\fR\m[]\&\s-2\u[2]\d\s+2,
+\m[blue]\fB\fBauth_login_meta\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fB\fBauth_getuserinfo_meta\fR(3)\fR\m[]\&\s-2\u[5]\d\s+2,
+\m[blue]\fB\fBauth_enumerate\fR(3)\fR\m[]\&\s-2\u[6]\d\s+2,
+\m[blue]\fB\fBauth_passwd\fR(3)\fR\m[]\&\s-2\u[7]\d\s+2,
+\m[blue]\fB\fBauth_getoption\fR(3)\fR\m[]\&\s-2\u[8]\d\s+2\&.
+.SH "NOTES"
+.IP " 1." 4
+\fBauth_login_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_login.html
+.RE
+.IP " 2." 4
+\fBauth_meta_init_default\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_meta.html
+.RE
+.IP " 3." 4
+\fBauth_sasl_ex\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_sasl.html
+.RE
+.IP " 4." 4
+\fBauthlib\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/authlib.html
+.RE
+.IP " 5." 4
+\fBauth_getuserinfo_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_getuserinfo.html
+.RE
+.IP " 6." 4
+\fBauth_enumerate\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_enumerate.html
+.RE
+.IP " 7." 4
+\fBauth_passwd\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_passwd.html
+.RE
+.IP " 8." 4
+\fBauth_getoption\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_getoption.html
+.RE

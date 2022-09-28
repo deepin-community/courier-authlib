@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# autopkgtest check: test two local users via PAM authentication.
+# Author: Markus Wanner <markus@bluegap.ch>
+
+set -eu
+
+. debian/tests/common.sh
+
+export LANG=C
+unset LANGUAGE LC_ALL LC_CTYPE
+
+test_enumeration() {
+    ENUM_OUTPUT="$AUTOPKGTEST_ARTIFACTS/authenumerate.out"
+
+    # test authenumerate
+    (
+        authenumerate_as_courier > $ENUM_OUTPUT 2> $AUTOPKGTEST_ARTIFACTS/authenumerate.err
+    )
+    echo $? > $AUTOPKGTEST_ARTIFACTS/authenumerate.exitcode
+
+    # the three test users should appear in the output of authenumerate
+    echo -n "checking for alice: "
+    grep "alice" $ENUM_OUTPUT > /dev/null && echo "ok" || echo "FAILED"
+    echo -n "checking for bob:   "
+    grep "bob"   $ENUM_OUTPUT > /dev/null && echo "ok" || echo "FAILED"
+    echo -n "checking for carol: "
+    grep "carol" $ENUM_OUTPUT > /dev/null && echo "ok" || echo "FAILED"
+}
+
+# Actual tests start here
+
+backup_config_files
+create_test_users
+
+start_authdaemon
+
+echo "== check enumeration..."
+test_enumeration
+
+echo "== test completed"

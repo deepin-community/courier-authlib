@@ -1,0 +1,476 @@
+'\" t
+.\"  <!-- Copyright 2004-2007 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: courierlogger
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "COURIERLOGGER" "1" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+courierlogger \- Courier syslog wrapper
+.SH "SYNOPSIS"
+.HP \w'\fBcourierlogger\fR\ 'u
+\fBcourierlogger\fR [\-name=\fItitle\fR] [\-facility=\fIsubsystem\fR] [\-pid=\fIfilename\fR] [\-user=\fIuser\fR] [\-group=\fIgroup\fR] [\-droproot] [[[\-respawn]\ [\-start]\ \fIprogram\fR\ [argument...]] | [\-stop] | [\-restart]]
+.SH "DESCRIPTION"
+.PP
+\fBcourierlogger\fR
+is a wrapper that captures another process\*(Aqs error messages, and forwards them to the system logging facility,
+\(lqsyslog\(rq\&.
+.PP
+There are two ways to use courierlogger:
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 1.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  1." 4.2
+.\}
+Use the shell to pipe another command\*(Aqs standard error, and/or its standard output, to
+\fBcourierlogger\fR\*(Aqs standard input\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 2.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  2." 4.2
+.\}
+Alternatively,
+\fBcourierlogger\fR
+itself can start another process, and arrange to have its standard error captured\&.
+.RE
+.PP
+In either case, each read line of text is sent as a syslog message\&.
+.SH "OPTIONS"
+.PP
+\-name=\fItitle\fR
+.RS 4
+Use
+\fItitle\fR
+for sending messages to syslog\&.
+\fItitle\fR
+should be the application\*(Aqs name\&.
+.RE
+.PP
+\-facility=\fIsubsystem\fR
+.RS 4
+Use
+\fIsubsystem\fR
+for classifying messages\&. Your syslog facility uses
+\fIsubsystem\fR
+to determine which log messages are recorded in which log files\&. The currently defined subsystems are:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+auth
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+authpriv
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+console
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+cron
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+daemon
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+ftp
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+kern
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+lpr
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mail
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+news
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+security
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+user
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+uucp
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local0
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local1
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local2
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local3
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local4
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local5
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local6
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+local7
+.RE
+.sp
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+Not all of the above facility names are implemented on every system\&. Check your system\*(Aqs syslog documentation for information on which facility names are allowed, and which log files record the corresponding messages for each facility\&.
+.sp .5v
+.RE
+.RE
+.PP
+\-pid=\fIfilename\fR
+.RS 4
+Save
+\fBcourierlogger\fR\*(Aqs process ID in
+\fIfilename\fR\&. The
+\fI\-pid\fR
+option is required when
+\fI\-start\fR,
+\fI\-stop\fR,
+\fI\-restart\fR
+are given\&. If
+\fI\-pid\fR
+is given without any of these,
+\fI\-start\fR
+is assumed\&.
+.RE
+.PP
+\-start
+.RS 4
+Run as a daemon\&. The
+\fBpid\fR
+option is required\&.
+\fBcourierlogger\fR
+will quietly terminate if another
+\fBcourierlogger\fR
+process is already running\&. This is used to make sure that only one instance of
+program
+is running at the same time\&. Specify a different filename with
+\fBpid\fR
+to start a second copy of
+program\&.
+.RE
+.PP
+\-respawn
+.RS 4
+Restart
+program
+if it terminates\&. Normally
+\fBcourierlogger\fR
+itself will terminate when
+program
+finishes running\&. Use
+\fBrespawn\fR
+to restart it instead\&.
+.RE
+.PP
+\-restart
+.RS 4
+Send a
+SIGHUP
+signal to the courierlogger process (as determined by examining the contents of the file specified by
+\fBpid\fR), which will in turn send a
+SIGHUP
+to its child
+program\&. Does nothing if courierlogger is not running\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+program
+must be originally started with the
+\fBrespawn\fR
+option if sending it a
+SIGHUP
+causes it to terminate\&.
+.sp .5v
+.RE
+The same thing may be accomplished by sending
+SIGHUP
+to
+\fBcourierlogger\fR
+itself\&.
+.RE
+.PP
+\-stop
+.RS 4
+Send a
+SIGTERM
+signal to courierlogger, which in turn forwards it on to
+program\&. If
+program
+does not terminate in 8 seconds, kill it with
+SIGKILL\&.
+.RE
+.PP
+\-user=\fIuser\fR, \-group=\fIgroup\fR
+.RS 4
+If running as root, change credentials to the given user and/or group, which may be given as names or numeric ids\&.
+.sp
+When running a child program, it is started
+\fIbefore\fR
+privileges are dropped (unless the
+\fB\-droproot\fR
+option is also given)\&. This gives a means of starting a child as root so it can bind to a privileged port, but still have courierlogger run as a non\-root user\&. For the
+\fB\-stop\fR
+and
+\fB\-restart\fR
+options to work, you should configure the child program to drop its privileges to the same userid too\&.
+.RE
+.PP
+\-droproot
+.RS 4
+Drop root privileges before starting the child process\&. The
+\fB\-user\fR
+and
+\fB\-group\fR
+options specify the non\-privileges userid and groupid\&. Without the
+\fB\-droproot\fR
+option the child process remains a root process, and only the parent
+\fBcourierlogger\fR
+process drops root privileges\&.
+.RE
+.PP
+\fIprogram\fR [ argument ] \&.\&.\&.
+.RS 4
+If a program is given
+program
+will be started as a child process of
+\fBcourierlogger\fR, capturing its standard error\&. Otherwise,
+\fBcourierlogger\fR
+reads message from standard input, and automatically terminates when standard input is closed\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBcouriertcpd\fR(1)\fR\m[]\&\s-2\u[1]\d\s+2, your syslog man page\&.
+.SH "NOTES"
+.IP " 1." 4
+\fBcouriertcpd\fR(1)
+.RS 4
+\%[set $man.base.url.for.relative.links]/couriertcpd.html
+.RE

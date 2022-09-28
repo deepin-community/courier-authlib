@@ -1,0 +1,2 @@
+/etc/courier/authmysqlrc
+/usr/lib/courier-authlib/libauthmysql.so*

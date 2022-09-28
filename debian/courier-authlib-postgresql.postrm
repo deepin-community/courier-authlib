@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+del_override() {
+    if dpkg-statoverride --list $1 >/dev/null 2>&1; then
+	dpkg-statoverride --force --remove $1
+    fi
+}
+
+if [ "$1" = "purge" ]; then
+    del_override /etc/courier/authpgsqlrc
+fi
+
+#DEBHELPER#
+
+exit 0

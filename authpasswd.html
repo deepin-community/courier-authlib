@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>authpasswd</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#authpasswd" title="authpasswd"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="authpasswd" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>authpasswd — Generate login passwords</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">authpasswd</code>  [method]</p></div></div><div class="refsect1"><a id="authpasswd_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<span class="command"><strong>authpasswd</strong></span> is a helper utility that generates encrypted
+passwords for the
+Courier authentication library.
+The Courier authentication library is capable of using several different
+encryption methods for storing passwords.
+<span class="command"><strong>authpasswd</strong></span> issues a password prompt.
+Enter the same password twice (for verification purposes).
+<span class="command"><strong>authpasswd</strong></span> computes and prints the encrypted password.
+The encrypted password can be inserted verbatim into the appropriate
+account record that's processed by the authentication library's
+<code class="literal">authmysql</code>,
+<code class="literal">authpgsql</code>,
+<code class="literal">authsqlite</code>,
+or <code class="literal">authldap</code> module.</p><p>
+<em class="replaceable"><code>method</code></em> may be set to one of the following
+literals:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">crypt</span></dt><dd><p>
+Use the traditional <acronym class="acronym">DES</acronym>-based encrypted password.</p></dd><dt><span class="term">md5</span></dt><dd><p>
+Compute a base64-encoded <acronym class="acronym">MD5</acronym> password hash.</p></dd><dt><span class="term">md5raw</span></dt><dd><p>
+Compute a hexadecimal-encoded <acronym class="acronym">MD5</acronym> password hash.</p></dd><dt><span class="term">sha1</span></dt><dd><p>
+Compute a <acronym class="acronym">SHA1</acronym> password hash.</p></dd><dt><span class="term">ssha</span></dt><dd><p>
+Compute a salted <acronym class="acronym">SHA1</acronym> password hash.</p></dd><dt><span class="term">sha256</span></dt><dd><p>
+Compute a <acronym class="acronym">SHA256</acronym> password hash.</p></dd></dl></div><p>
+If not specified,
+<em class="replaceable"><code>method</code></em> defaults to the
+modified-<acronym class="acronym">MD5</acronym> password encryption algorithm that's used
+in Linux (note that this is different from the <span class="quote">“<span class="quote">md5</span>”</span> password
+hash method).</p></div></div></body></html>

@@ -1,0 +1,769 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>Courier Authentication Library</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#authlib" title="Courier Authentication Library"/><link rel="next" href="#authpwd" title="The authpwd authentication module"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="authlib" shape="rect"> </a>Courier Authentication Library</h1></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="sect1"><a href="#authpwd" shape="rect">The <code class="literal">authpwd</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authshadow" shape="rect">The <code class="literal">authshadow</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authpam" shape="rect">The <code class="literal">authpam</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authpipe" shape="rect">The <code class="literal">authpipe</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authpipeproto" shape="rect">The <code class="literal">authpipe</code> protocol</a></span></dt><dt><span class="sect1"><a href="#authuserdb" shape="rect">The <code class="literal">authuserdb</code> authentication module</a></span></dt><dd><dl><dt><span class="sect2"><a href="#userdbprimer" shape="rect">A brief <code class="literal">userdb</code> primer</a></span></dt><dt><span class="sect2"><a href="#userdbsimple" shape="rect">A simple userdb setup</a></span></dt><dt><span class="sect2"><a href="#userdbcomplex" shape="rect">Large virtual domain farm</a></span></dt><dt><span class="sect2"><a href="#moreuserdb" shape="rect">Beyond <code class="literal">userdb</code></a></span></dt></dl></dd><dt><span class="sect1"><a href="#authmysql" shape="rect">The <code class="literal">authmysql</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authpgsql" shape="rect">The <code class="literal">authpgsql</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authsqlite" shape="rect">The <code class="literal">authsqlite</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authldap" shape="rect">The <code class="literal">authldap</code> authentication module</a></span></dt><dt><span class="sect1"><a href="#authcustom" shape="rect"><code class="literal">authcustom</code></a></span></dt><dt><span class="sect1"><a href="#options" shape="rect">Account options</a></span></dt><dt><span class="sect1"><a href="#authtest" shape="rect">Running <span class="command"><strong>authtest</strong></span></a></span></dt><dd><dl><dt><span class="sect2"><a href="#pwchange" shape="rect">Changing account passwords</a></span></dt></dl></dd><dt><span class="sect1"><a href="#internals" shape="rect">Authentication internals</a></span></dt><dt><span class="sect1"><a href="#files" shape="rect">FILES</a></span></dt><dt><span class="sect1"><a href="#seealso" shape="rect">SEE ALSO</a></span></dt></dl></div><p>
+This library is used for two purposes:</p><p>
+1. Read the name of a mail account.
+Determine the local account's home directory, and system userid and
+groupid.</p><p>
+2. Read an account name, and a password.
+If valid, determine the account's home directory, system userid, and
+groupid.</p><p>
+The term "authentication" is used in the following documentation to refer
+to either one of these two functions.
+The library contains several alternative authentication modules to choose
+from, described below.</p><p>
+The configuration file <code class="filename">@authdaemonrc@</code> contains several
+settings.  The most important of them are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+A list of authentication modules to activate.
+By default, this list includes all available authentication modules,
+even if some are not actually installed at the moment.
+When the authentication library is set up, only those authentication
+modules that can be supported by the operating system will be installed.
+Some of the listed modules may not actually be there,
+however that's not a problem.
+Any unavailable authentication modules will be ignored.
+Also, on some platforms certain authentication modules are installed by
+optional sub-packages.
+Installing the sub-package is the only action needed to make use of it.</p><p>
+The only time the list of authentication modules need to be adjusted is
+when an available authentication module must be disabled for some reason.
+This should only be needed in the most unusual circumstances.</p></li><li class="listitem"><p>
+Number of authentication processes.
+The default setting is to start five authentication processes, which should be
+sufficient for normal usage.
+Try increasing this setting if its taking too long to log into an account,
+and you have determined that this is not due to a bottleneck in the whatever
+authentication database you're using (LDAP, MySQL, SQLite,
+or PostgreSQL).</p><p>
+An authentication request must be completed within thirty seconds, otherwise
+it gets rejected.
+When authentication requests come in faster than all five authentication
+processes can get to them, delays build up, and the timer is ticking.
+If all the activity maxes out the CPU or I/O bandwidth,
+nothing can be done about it, short
+of getting another server.  However if there's plenty of available CPU and
+I/O, increasing the number of processes will do the trick.</p></li></ul></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authpwd" shape="rect"> </a>The <code class="literal">authpwd</code> authentication module</h2></div></div></div><p>
+This modules obtains account information and passwords from the
+<code class="filename">/etc/passwd</code> file.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+This module doesn't actually read the <code class="filename">/etc/passwd</code>
+file, it uses the C library's getpw() functions.
+The C library implementation could use any mechanism to obtain the equivalent
+information.</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authshadow" shape="rect"> </a>The <code class="literal">authshadow</code> authentication module</h2></div></div></div><p>
+This module is a version of the <code class="literal">authpwd</code> module that
+reads passwords
+from <code class="filename">/etc/shadow</code> (the C library's getsp()
+functions).</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authpam" shape="rect"> </a>The <code class="literal">authpam</code> authentication module</h2></div></div></div><p>
+This modules uses the system's PAM library
+(pluggable authentication modules) for authentication.
+This is, essentially, a way to use existing PAM modules for authentication.
+Note, however, that the authenticated account's home directory, userid and
+groupid are still read from the <code class="filename">/etc/passwd</code> file,
+since PAM functionality is limited to validating account passwords.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+Not all PAM modules are compatible with Courier's authentication library.
+PAM modules that make use of PAM's session functions, or authentication token
+functions, like <code class="literal">pam_krb5</code> will not work with Courier.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+Additional configuration steps will be required to set up
+the PAM library to authenticate Courier's services.
+Courier's IMAP and POP3 servers, for example, require that the
+<span class="quote">“<span class="quote">imap</span>”</span> and <span class="quote">“<span class="quote">pop3</span>”</span> PAM service to be
+configured.</p><p>
+The specific configuration steps differ from system to system.
+Consult the system documentation for more information.
+It might be tempting to throw in a towel and use
+<code class="literal">authshadow</code> or <code class="literal">authpwd</code>
+if you cannot figure out how to install PAM support,
+however that is not advisable.
+It is highly recommended to use
+<code class="filename">authpam</code> wherever the PAM library is available.</p><p>
+The exact configuration procedure depends on the PAM implementation.
+Most PAM libraries use configuration files in the
+<code class="filename">/etc/pam.d</code> directory.
+Therefore, it will be necessary to install the configuration files
+<code class="filename">/etc/pam.d/imap</code> and
+<code class="filename">/etc/pam.d/pop3</code>.  Similarly, Courier's webmail
+server, SqWebMail, uses <code class="filename">/etc/pam.d/webmail</code>, and
+its optional calendar component uses <code class="filename">/etc/pam.d/webmail</code>.
+Courier-MTA's authenticated SMTP component uses the
+<code class="filename">/etc/pam.d/smtp</code> service.</p><p>
+In nearly all cases all these configuration files will specify an
+identical PAM library configuration for all services.
+The exact configuration details are site-specific.
+Here's an example of a PAM configuration file for a recent version of the
+most common PAM library:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+auth       required     pam_nologin.so
+auth       required     pam_stack.so service=system-auth
+account    required     pam_stack.so service=system-auth
+session    required     pam_stack.so service=system-auth
+</pre></div><p>
+Again, the actual configuration is site specific.
+Examine the contents of existing configuration files in
+<code class="filename">/etc/pam.d</code> for similar services (if there's
+<code class="filename">/etc/pam.d/ppp</code>
+it's often a good example to follow) in order
+to derive the correct setup for Courier.</p><p>
+Older PAM libraries use a single configuration file, usually
+<code class="filename">/etc/pam.conf</code>.
+Append Courier-specific PAM settings to this configuration file, again
+using settings for existing services as a guide.
+For example:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+imap  auth    required        pam_unix.so      try_first_pass
+imap  account required        pam_unix.so
+imap  session required        pam_permit.so
+pop3  auth    required        pam_unix.so      try_first_pass
+pop3  account required        pam_unix.so
+</pre></div><p>
+Some PAM libraries use
+<code class="filename">pam_pwdb.so</code> instead of
+<code class="filename">pam_unix.so</code>; consult the PAM library's
+documentation for more information.</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authpipe" shape="rect"> </a>The <code class="literal">authpipe</code> authentication module</h2></div></div></div><p>This is a generic plug-in module that runs an external script,
+or a program, in response to authentication requests.</p><p>The external program reads from stdin and writes to stdout. It
+can be persistent and handle many authentication requests. Only one request
+will be sent to it at a time; each authdaemon process starts its own copy of
+the external script.</p><p>The location of the external program is set by the
+<code class="literal">--with-pipeprog</code> configure option,
+which defaults to
+<code class="filename">@sysconfdir@/authlib/authProg</code>. A sample program
+is included in the courier-authlib source.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authpipeproto" shape="rect"> </a>The <code class="literal">authpipe</code> protocol</h2></div></div></div><p>
+	authpipe uses the same protocol as authdaemon clients use to communicate
+	with authdaemond (with the exception of optional authentication metadata
+	whose forwarding is not implemented at this time).</p><p>There are four possible requests: <code class="literal">PRE</code>,
+<code class="literal">AUTH</code>, <code class="literal">PASSWD</code> and
+<code class="literal">ENUMERATE</code>. Apart from <code class="literal">AUTH</code>, each
+request is a single line terminated by newline.
+</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">PRE . <em class="replaceable"><code>authservice</code></em> <em class="replaceable"><code>username</code></em> <span class="emphasis"><em>&lt;newline&gt;</em></span></span></dt><dd><p>Look up data for an account.
+      <em class="replaceable"><code>authservice</code></em> identifies the service the
+      user is trying to use - e.g. pop3, imap, webmail etc.</p><p>If the account exists, return the account
+      data as a series of ATTR=value newline-terminated lines, followed by a
+      period on a line of its own. Valid attributes are:
+      </p><pre class="screen" xml:space="preserve">
+      USERNAME=username         -- system account which owns mailbox (name)
+      UID=uid                   -- system account which owns mailbox (numeric uid)
+      GID=gid                   -- numeric groupid
+      HOME=homedir              -- home directory
+      ADDRESS=addr              -- e-mail address
+      NAME=name                 -- full name
+      MAILDIR=maildir           -- Maildir relative to home directory
+      QUOTA=quota               -- quota string: maxbytesS,maxfilesC
+      PASSWD=cryptpasswd        -- encrypted password
+      PASSWD2=plainpasswd       -- plain text password
+      OPTIONS=acctoptions       -- option1=val1,option2=val2,...
+      .
+      </pre><p>
+      Of these, it is mandatory to return ADDRESS, HOME, GID, and either UID
+      or USERNAME; the others are optional.
+      </p><p>If the account is not known, return <code class="literal">FAIL</code><span class="emphasis"><em><code class="literal">&lt;newline&gt;</code></em></span>.
+      If there is a temporary failure, such as a database being down, authProg
+      should terminate (thereby closing stdin/stdout) without sending any
+      response. authdaemon will restart the pipe module for the next
+      request, thus ensuring it is properly reinitialized.
+      </p></dd><dt><span class="term">AUTH <em class="replaceable"><code>len</code></em><span class="emphasis"><em>&lt;newline&gt;</em></span><em class="replaceable"><code>len-bytes</code></em></span></dt><dd><p>
+    Validate a login attempt. The AUTH line is followed by
+    <span class="emphasis"><em>len-bytes</em></span> of authentication data, which does not
+    necessarily end with a newline. The currently defined authentication
+    requests are:
+    </p><pre class="screen" xml:space="preserve">
+    service \n login \n username \n password [\n]         -- plaintext login
+    service \n cram-md5 \n challenge \n response [\n]     -- base-64 encoded challenge and response
+    service \n cram-sha1 \n challenge \n response [\n]    -- ditto
+    service \n cram-sha256 \n challenge \n response [\n]  -- ditto
+    </pre><p>
+    In the case of success, return the complete set of
+    account parameters in the same format as PRE, ending with a period on
+    a line of its own. In the case of failure (e.g. username does not exist,
+    password wrong, unsupported authentication type), return
+    <code class="literal">FAIL</code><span class="emphasis"><em><code class="literal">&lt;newline&gt;</code></em></span>.
+    If there is a temporary failure, such as a database being down, authProg
+    should terminate without sending any response.
+    </p><p>
+    Note: if the user provides a plaintext password and authenticates
+    successfully, then you can return it as PASSWD2 (plain text password)
+    even if the database contains an encrypted password. This is useful
+    when using the POP3/IMAP proxy functions of courier-imap.
+    </p></dd><dt><span class="term">PASSWD <em class="replaceable"><code>service</code></em><span class="emphasis"><em>&lt;tab&gt;</em></span>
+      <em class="replaceable"><code>username</code></em><span class="emphasis"><em>&lt;tab&gt;</em></span>
+      <em class="replaceable"><code>oldpasswd</code></em><span class="emphasis"><em>&lt;tab&gt;</em></span>
+      <em class="replaceable"><code>newpasswd</code></em><span class="emphasis"><em>&lt;tab&gt;</em></span>
+      <span class="emphasis"><em>&lt;newline&gt;</em></span>
+    </span></dt><dd><p>Request a password change for the given account: validate that
+      the oldpassword is correct, and if so, change it to the newpassword.
+      </p><p>Reply: the string <code class="literal">OK</code><span class="emphasis"><em><code class="literal">&lt;newline&gt;</code></em></span>
+      for success, or <code class="literal">FAIL</code><span class="emphasis"><em><code class="literal">&lt;newline&gt;</code></em></span> for
+      a data error (e.g. no such account, old password wrong, new password not
+      acceptable). In the case of a temporary failure, such as a database
+      being down, authProg should terminate without sending any response.
+      </p></dd><dt><span class="term">ENUMERATE <span class="emphasis"><em>&lt;newline&gt;</em></span></span></dt><dd><p>
+    Return a list of all accounts, one per line in the following format,
+    ending with a period on a line of its own:
+    </p><pre class="screen" xml:space="preserve">
+    username \t uid \t gid \t homedir \t maildir \t options \n
+    .
+    </pre><p>
+    If your module does not support the ENUMERATE command then return just
+    a period on a line of its own (which will still allow enumeration data
+    from other modules to be returned). In the case of a temporary failure,
+    such as a database being down or an error occuring mid-way through
+    returning account data, authProg should terminate before sending
+    the terminating period.
+    </p></dd></dl></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authuserdb" shape="rect"> </a>The <code class="literal">authuserdb</code> authentication module</h2></div></div></div><p>
+This module
+uses a GDBM or a DB-based
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a> database.
+This module also incorporates userdb-based challenge-response authentication
+implementation that was done by a separate <code class="literal">authcram</code> module
+in previous versions of the Courier authentication library.</p><p>
+<code class="filename">@sysconfdir@/authlib/userdb</code> is a plain file that
+can be edited with any text editor.
+The file contains a list of account names, and their pertinent information.
+<code class="filename">@sysconfdir@/authlib/userdb</code> may alternatively be a
+directory containing plain text files, which are effectively concatenated
+together to form the actual list of accounts.
+The <span class="command"><strong>makeuserdb</strong></span> script compiles the account information
+into a GDBM or DB database file, which can be quickly looked up.</p><p>
+<code class="filename">@sysconfdir@/authlib/userdb</code> is loosely equivalent in
+function to <code class="filename">/etc/passwd</code> and
+<code class="filename">/etc/shadow</code>, and contain analous information: account
+name, its numeric userid and groupid, home directory, and passwords.
+<code class="filename">@sysconfdir@/authlib/userdb</code> also contains additional
+Courier-specific metadata, such as account quotas and other account-specific
+settings.
+<code class="filename">@sysconfdir@/authlib/userdb</code> files can also be
+maintained by custom-written Perl scripts, instead of being edited
+by hand.</p><p>
+<code class="filename">@sysconfdir@/authlib/userdb</code>
+allows creation of virtual mail accounts that do not have a corresponding
+login account -- virtual mail accounts that can share the same, reserved,
+system userid.
+<code class="filename">@sysconfdir@/authlib/userdb</code>
+can also be used to completely supersede
+<code class="filename">/etc/passwd</code>.
+With many accounts it can be quite a drain to have to continuously linearly
+scan <code class="filename">/etc/passwd</code> in order to look up an account.
+Instead, a fast database lookup can retrieve the same information from the
+database file.
+Review the included manual pages, starting with
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a>, for more information.</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="userdbprimer" shape="rect"> </a>A brief <code class="literal">userdb</code> primer</h3></div></div></div><p>
+<code class="literal">userdb</code> is a way to implement many virtual mailboxes - many
+mailboxes that do not have to have a separate system userid allocated for
+each one, and there is no system login associated with each mailbox.
+<code class="literal">userdb</code> uses a database for mapping virtual addresses to physical
+maildirs. It should be scalable to thousands of mailboxes. It can also be
+used to replace linear searches of <code class="filename">/etc/passwd</code> with a database
+lookup, see
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a>.</p><p>
+Note - you still MUST use some valid system userid and groupid that is
+shared by all virtual mailboxes. Instead of allocating a single userid and
+groupid per each mailbox, the same userid and groupid is used for all of
+them.</p><p>
+This is a rough overview of using userdb. For additional information, read
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a>
+and
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a>. All the scripts will
+be installed in <code class="filename">@sbindir@</code>, so look for them there.</p><p>
+The best way to describe how <code class="literal">userdb</code> works is to try to create
+one virtual mail account. As mentioned before, virtual mailboxes still need
+one system account to be used for uid/gid purposes. Let's call this system
+account "vmail".</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="userdbsimple" shape="rect"> </a>A simple userdb setup</h3></div></div></div><p>
+This approach should be used if you do not have many virtual mailboxes.
+It's very simple, but quickly becomes cumbersome if you administer many
+virtual mailboxes.</p><p>Create an empty <code class="filename">@userdb@</code> file:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# cp /dev/null @userdb@
+# chmod 700 @userdb@</pre></div><p>
+<code class="filename">@userdb@</code> must have 700 permissions,
+since it will contain passwords.</p><p>
+Now, run the script <span class="command"><strong>pw2userdb</strong></span>, as root.
+This script converts the
+contents of <code class="filename">/etc/passwd</code>
+to the <code class="filename">@userdb@</code> format
+(including the contents of <code class="filename">/etc/shadow</code>,
+this is why permissions
+on <code class="filename">@userdb@</code> must be 700). This script is usually used
+where you
+want to convert a very large <code class="filename">/etc/passwd</code> to
+<code class="filename">@userdb@</code>. <code class="literal">userdb</code> applications can now
+use a fast
+<code class="literal">userdb</code> database instead of a linear scan
+of <code class="filename">/etc/passwd</code>
+in order to look up system accounts. However, you probably don't want to
+use this feature right now, so what you want to do is take the output
+of <span class="command"><strong>pw2userdb</strong></span>, and find the entry for the vmail account
+that you
+created earlier. Look for a line that starts with 'vmail' followed by tab,
+followed by familiar fields from <code class="filename">/etc/passwd</code>. Save the
+output of
+<span class="command"><strong>pw2userdb</strong></span> in a temporary file, edit it, and remove
+everything
+except the line containing vmail, and the very next line, which is a special
+entry that maps vmail's userid back to the vmail record.</p><p>
+Here's what you might find in the output of
+<span class="command"><strong>pw2userdb</strong></span>:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+vmail   uid=1012|gid=1012|home=/home/vmail|systempw=*
+1012=   vmail</pre></div><p>
+The actual numerical values and the home directory location may vary.
+Save
+these two lines as <code class="filename">@userdb@</code>, and set the permissions on
+<code class="filename">@userdb@</code> to 700:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+$ chmod 700 <code class="filename">@userdb@</code>
+</pre></div><p>
+Now, with that out of the way, let's really create a virtual account. In
+this example we'll create a virtual mailbox for 'john@example.com'.</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# su vmail
+$ cd ~vmail
+$ mkdir john-example
+$ maildirmake john-example/Maildir
+$ exit
+#
+</pre></div><p>
+You may need to specify a full path to your <span class="command"><strong>maildirmake</strong></span>
+program. The end result is that you created
+<code class="filename">$HOME/john-example</code> in vmail's account, which
+can be thought of as a <span class="quote">“<span class="quote">virtual home directory</span>”</span> for
+<span class="quote">“<span class="quote">john@example.com</span>”</span>, that contains the account's maildir
+mailbox.</p><p>
+Now, let's connect the dots here, and create an entry in
+<code class="filename">@userdb@</code> for <code class="filename">john@example.com</code>:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# userdb "john@example.com" set home=/home/vmail/john-example \
+                                uid=UUU gid=GGG
+</pre></div><p>
+This command runs the script named <code class="filename">userdb</code> , which is
+installed, by default in <code class="filename">@sbindir@</code>. Replace UUU and
+GGG with the userid and groupid of the vmail account. If you now look in
+<code class="filename">@userdb@</code>, you will see that a new record for
+<span class="quote">“<span class="quote">john@example.com</span>”</span>
+has been appended to the end of the file.</p><p>
+One more detail: we need to set the IMAP password for this
+mailbox:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# userdbpw | userdb "john@example.com" set imappw</pre></div><p>
+On most modern Linux and BSD distributions, you can specify the -md5
+option to <span class="command"><strong>userdbpw</strong></span>, in order to use MD5 password hashes,
+instead of crypt. The traditional password function allows passwords only
+up to 8 characters long; everything in excess is ignored.
+The newer MD5 passwords, now supported by most modern systems, allow
+longer passwords.</p><p>
+Use "<code class="literal">systempw</code>" instead of
+"<code class="literal">imappw</code>" if you would like to use the same password for the POP3
+server, and for all other services.
+The "<code class="literal">imappw</code>" field is only checked by the IMAP server.
+If not
+defined, "<code class="literal">systempw</code>" is used instead. The field
+<code class="literal">pop3pw</code>
+is checked only by Courier's POP3 server. If it is
+not defined the POP3 server will check <code class="literal">systempw</code> too.</p><p>Finally, compile the database:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# makeuserdb
+</pre></div><p>
+This command creates the actual database, <code class="filename">@userdb@.dat</code> and
+<code class="filename">@userdb@shadow.dat</code> from the plain text file
+<code class="filename">@userdb@</code>. Courier will now start accepting logins to this
+mailbox. Adding and removing mailboxes can be done while Courier is
+running.</p><p>
+Courier reads <code class="filename">@userdb@.dat</code> and
+<code class="filename">@userdb@shadow.dat</code> only. The plain text source,
+<code class="filename">@userdb@</code> is not read by Courier itself. Changes take
+effect
+only when <span class="command"><strong>makeuserdb</strong></span> runs.</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="userdbcomplex" shape="rect"> </a>Large virtual domain farm</h3></div></div></div><p>
+The previous approach used a single flat file, <code class="filename">@userdb@</code>.
+This
+will work for up to a couple of hundred accounts.
+An slightly different approach can scale to thousands of
+domains and mailboxes.</p><p>
+Instead of creating a <code class="filename">@userdb@</code> file, create a
+subdirectory:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# mkdir @userdb@
+# chmod 700 @userdb@
+</pre></div><p>
+Now, create <code class="filename">@userdb@/default</code>, containing pw2userdb's
+output
+for the vmail account, as previously described.</p><p>
+This time, you probably want to create all mailboxes for the same domain
+in a separate subdirectory:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+# su - vmail
+$ cd ~vmail
+$ mkdir -p domains/example-com
+$ mkdir domains/example-com/john
+$ maildirmake domains/example-com/john
+$ exit
+</pre></div><p>
+The idea is that all the maildirs for <code class="literal">@example.com</code> will
+now be found
+in <code class="filename">~vmail/domains/example-com</code>. All maildirs for
+<code class="literal">domain.org</code> will be in
+<code class="filename">~vmail/domains/domain.org</code>. The actual layout and naming
+conventions are entirely up to you to define.</p><p>Here's how configure <code class="filename">@userdb@</code>:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+$ userdb "example-com/john@example.com" set \
+             home=/home/vmail/domains/example-com/john \
+             uid=UUU gid=GGG</pre></div><p>
+This creates the file <code class="filename">@userdb@/example-com</code> (the first
+parameter to the <span class="command"><strong>userdb</strong></span> command), and appends a record named
+"john@example.com". You will store all <code class="literal">userdb</code> entries for
+<code class="literal">@example.com</code> in the file
+<code class="filename">@userdb@/example-com</code>. All
+entries for <code class="literal">@domain.org</code> will be maintained in
+<code class="filename">@userdb@/domain-org</code>, and so on.</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+$ userdbpw | userdb "example-com/john@example.com" set imappw
+</pre></div><p>
+This sets the IMAP access password for this account. Finally:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+$ makeuserdb
+</pre></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="moreuserdb" shape="rect"> </a>Beyond <code class="literal">userdb</code></h3></div></div></div><p>
+<code class="literal">userdb</code> is a simple, straightforward solution that scales
+to a couple of thousand of mail accounts, depending on the hardware.
+Beyond that, one of database-based modules will need to be used,
+such as
+<code class="literal">authldap</code>,
+<code class="literal">authmysql</code>,
+<code class="literal">authsqlite</code>,
+<code class="literal">authpgsql</code>.
+Since <code class="literal">userdb</code> is maintained as plain text files that
+are easily parsed by a script, migrating data from userdb will not be
+difficult.</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authmysql" shape="rect"> </a>The <code class="literal">authmysql</code> authentication module</h2></div></div></div><p>
+This module reads
+the list of mail accounts and passwords from a table in a
+MySQL database.
+The <code class="filename">@authmysqlrc@</code> configuration file defines the
+particular details regarding the MySQL database and the schema of the
+mail account table.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authpgsql" shape="rect"> </a>The <code class="literal">authpgsql</code> authentication module</h2></div></div></div><p>
+This module reads
+the list of mail accounts and passwords from a table in a
+PostgreSQL database.
+The <code class="filename">@authpgsqlrc@</code> configuration file defines the
+particular details regarding the PostgreSQL database and the schema of the
+mail account table.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authsqlite" shape="rect"> </a>The <code class="literal">authsqlite</code> authentication module</h2></div></div></div><p>
+This module reads
+the list of mail accounts and passwords from a table in a
+SQLite database file.
+The <code class="filename">@authsqliterc@</code> configuration file defines the
+particular details regarding the SQLite database file and the schema of the
+mail account table.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authldap" shape="rect"> </a>The <code class="literal">authldap</code> authentication module</h2></div></div></div><p>
+This module reads
+the list of mail accounts and passwords from an LDAP directory.
+The <code class="filename">@authldaprc@</code> configuration file defines the
+particular details regarding the LDAP directory layout.</p><p>
+A suggested LDAP schema can be found in the files
+<code class="filename">authldap.schema</code> and
+<code class="filename">authldap.ldif</code>,
+which is included in Courier authentication library's source code, and
+may be installed on your system.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authcustom" shape="rect"> </a><code class="literal">authcustom</code></h2></div></div></div><p>
+This is a do-nothing module where custom authentication code
+can be added.
+This authentication module is just a stub that doesn't really do anything.
+It's purpose is to serve as a placeholder where custom authentication code
+can be easily implement.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="options" shape="rect"> </a>Account options</h2></div></div></div><p>
+The authentication library has a facility for keep arbitrary
+<span class="quote">“<span class="quote">name=value</span>”</span>-type settings,
+called <span class="quote">“<span class="quote">options</span>”</span>, for individual accounts. This feature is
+only available with
+<code class="literal">userdb</code>,
+<code class="literal">LDAP</code>, <code class="literal">MySQL</code>, <code class="literal">SQLite</code> and
+<code class="literal">PostgresSQL</code>
+modules. Individual account options are not supported with
+system-based authentication modules (password/shadow files, or PAM).</p><p>
+See
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>
+for a description of option names used by various Courier packages.
+Other applications can make up names for their own settings, and
+use them in the same way.</p><p>
+Account options are specified via the authentication modules in the
+following manner:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">userdb</code></span></dt><dd><p>
+Use the <span class="command"><strong>userdb</strong></span> command to set a field called
+"<code class="literal">options</code>". Example:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+userdb user1@example.com set options=disableimap=1,sharedgroup=44
+makeuserdb
+</pre></div><p>
+The option text string here is
+"<code class="literal">disableimap=1,sharedgroup=44</code>".
+It specifies two options.</p></dd><dt><span class="term"><code class="literal">LDAP</code></span></dt><dd><p>
+Account options are defined by the <code class="literal">LDAP_AUXOPTIONS</code>
+setting in the <code class="filename">authldaprc</code> configuration file.
+<code class="literal">LDAP_AUXOPTIONS</code> consists of a comma-separated list of
+"<code class="literal">attribute=setting</code>". "attribute" is the name of an LDAP
+attribute, and "setting" is the corresponding account setting name. The
+value of the attribute becomes the value of the setting. Unless you
+value your sanity, the names of LDAP attributes should be the same as
+the actual setting names (in which case "=setting" may be dropped and
+<code class="literal">LDAP_AUXOPTIONS</code> becomes a simple comma-separated list of
+supported settings), but they don't have to be.</p><p>
+<code class="literal">LDAP_AUXOPTIONS</code> is nothing more than a simple mapping
+of LDAP attributes to account settings. A <code class="literal">LDAP_AUXOPTIONS</code>
+of "shared=sharedgroup,disableimap" means that the LDAP attribute
+called "shared" contains the "sharedgroup" setting, as described
+previously; and an LDAP attribute of disableimap contains the setting
+of the same name.</p></dd><dt><span class="term"><span class="application">MySQL</span>,
+<span class="application">SQLite</span>, and <span class="application">PostgreSQL</span></span></dt><dd><p>
+Account options are defined by <code class="literal">MYSQL_AUXOPTIONS_FIELD</code>,
+<code class="literal">SQLITE_AUXOPTIONS_FIELD</code>,
+or <code class="literal">POSTGRESQL_AUXOPTIONS_FIELD</code>, in its corresponding
+configuration file. In the most simplest case, add a character field to
+the database, and put the field name into the
+<code class="literal">MYSQL_AUXOPTIONS_FIELD</code>,
+<code class="literal">SQLITE_AUXOPTIONS_FIELD</code>, or
+<code class="literal">POSTGRESQL_AUXOPTIONS_FIELD</code> configuration file setting.
+For each account, the character field should contain the literal option
+string. Yes, you'll just put "shared=sharedgroup,disableimap"
+literally, in that field.</p><p>
+Fortunately, there is a cleaner way to do this, which avoid driving
+a database designer batty. Keep in mind that the contents of
+<code class="literal">MYSQL_AUXOPTIONS_FIELD</code>/<code class="literal">SQLITE_AUXOPTIONS_FIELD</code>/<code class="literal">POSTGRESQL_AUXOPTIONS_FIELD</code>
+are simply inserted directly into the SQL query that fetches the
+account information. MySQL, SQLite, and PostgreSQL have a rich SQL that can
+be used to manufacture a suitable option string from plain,
+garden-variety, database fields. That is, you may define individual
+table fields like "disableimap", and "disablepop3", then provide a
+suitable (albeit ugly) SQL fragment that combines them together into
+the expected option string. An example of such an SQL string is
+provided in the comments portion of the configuration file.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+When using the alternative custom query option, the option string
+        is the last field that the custom SQL query should return.</p></div></dd></dl></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+The following list of account options is a combined list of implemented
+options supported by Courier, Courier-IMAP, and
+SqWebMail packages. Some of the following information is obviously
+not applicable for a particular package.
+The inapplicable bits should be obvious.</p></div><p>
+The following options are recognized by the various Courier
+packages:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">disableimap=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, IMAP access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disablepop3=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, POP3 access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableinsecureimap=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, unencrypted IMAP access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableinsecurepop3=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, unencrypted POP3 access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disablewebmail=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, webmail access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableshared=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, this account should not have access to shared folders or be able
+to share its own folders with other people.</p></dd><dt><span class="term"><code class="literal">group=</code><em class="replaceable"><code>name</code></em></span></dt><dd><p>
+This option is used by Courier-IMAP in calculating access control lists.
+This option places the account as a member of access group
+<em class="replaceable"><code>name</code></em>.
+Instead of granting access rights on individual mail folders to individual
+accounts, the access rights can be granted to an access group
+<span class="quote">“<span class="quote">name</span>”</span>, and all members of this group get the specified access
+rights.</p><p>
+The access group name <span class="quote">“<span class="quote">administrators</span>”</span> is a reserved group.
+All accounts in the <code class="literal">administrators</code> group automatically
+receive all rights to all accessible folders.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+This option may be specified multiple times to specify that the account
+belongs to multiple account groups.</p></div></dd><dt><span class="term"><code class="literal">sharedgroup=</code><em class="replaceable"><code>name</code></em></span></dt><dd><p>
+Another option used by Courier-IMAP.
+Append "name" to the name of the top level virtual shared folder
+index file. This setting restricts which virtual shared folders this
+account could possibly access (and that's on top of whatever else the
+access control lists say). See the virtual shared folder documentation
+for more information.</p><p>
+For technical reasons, group names may not include comma, tab, "/" or "|"
+characters.</p></dd></dl></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="authtest" shape="rect"> </a>Running <span class="command"><strong>authtest</strong></span></h2></div></div></div><p>
+The <span class="command"><strong>authtest</strong></span> command may be used to verify that the
+authentication library is working:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+authtest userid
+authtest userid password
+authtest userid password newpassword
+authenumerate</pre></div><p>
+Running
+<span class="command"><strong>authtest</strong></span>
+with one argument should display the selected account's
+home directory, userid, groupid,
+and other related data.
+The second argument to
+<span class="command"><strong>authtest</strong></span>,
+if supplied, specifies the account's password.
+The two argument form of
+<span class="command"><strong>authtest</strong></span>
+validates the password, and displays an indication whether the given
+password is valid, or not.
+The three argument form of the
+<span class="command"><strong>authtest</strong></span>
+command attemps to change the account's password.
+The second argument is the old password, the third argument is the
+new password.</p><p>
+See <a class="ulink" href="README.authdebug.html" target="_top" shape="rect"><code class="filename">README.authdebug.html</code></a> for more information.</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="pwchange" shape="rect"> </a>Changing account passwords</h3></div></div></div><p>For the virtual domain modules (<code class="literal">authldap</code>,
+<code class="literal">authmysql</code>,
+<code class="literal">authsqlite</code>,
+<code class="literal">authpgsql</code> and friends) changing the
+login is a no-brainer. The tricky situation is when SqWebMail uses system
+passwords to log in (the <code class="literal">authpwd</code>, <code class="literal">authshadow</code>, or
+<code class="literal">authpam</code> authentication module). Different systems use different
+ways to keep login passwords. Many systems use the traditional
+<code class="filename">/etc/passwd</code> and <code class="filename">/etc/shadow</code> files. Other systems
+use a binary database; other systems use NIS. And on some systems the
+password file lookup library is a wrapper that goes against an external LDAP
+directory, or a database. For maximum compatibility, SqWebMail changes login
+passwords by running the <span class="command"><strong>passwd</strong></span> command. This is the traditinal
+*nix command that changes login passwords. <span class="command"><strong>passwd</strong></span> is an
+interactive command. It's normally run from a terminal.
+ SqWebMail uses an
+<span class="command"><strong>expect</strong></span> script - as mentioned in
+the introduction - to answer interactive
+prompts from <span class="command"><strong>passwd</strong></span>. The <span class="command"><strong>expect</strong></span> script expects to
+get a plain, garden-variety, <span class="command"><strong>passwd</strong></span> command, which acts
+something like this:</p><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+     # passwd
+     Changing password for luser
+     (current) UNIX password:         (old password typed here)
+     New UNIX password:               (new password typed here)
+     Retype new UNIX password:        (new password retyped here)
+     passwd: all authentication tokens updated successfully
+     #
+</pre></div><p>
+Systems that use a <span class="command"><strong>passwd</strong></span> command with very different prompts
+may find that the default <span class="command"><strong>expect</strong></span> script will fail. In which case
+it will be necessary to tweak the <span class="command"><strong>expect</strong></span> script to match the
+prompts from the system's <span class="command"><strong>passwd</strong></span> command.</p><p>
+Modern systems use a <span class="command"><strong>passwd</strong></span> command that rejects "bad"
+passwords - passwords that are based on dictionary words, are too short, or
+are obvious for other reasons. When testing the ability to change
+system passwords be sure to use randomly-generated gibberish for the test
+passwords. Otherwise, the default <span class="command"><strong>expect</strong></span> script will
+actually be
+working, but you won't be the wiser. For security reasons, the actual
+messages from <span class="command"><strong>passwd</strong></span> will not be shown by.</p><p>
+The <span class="command"><strong>expect</strong></span> script is installed as
+<code class="filename">/usr/local/libexec/courier-authlib/authsystem.passwd</code>
+(assuming default options to the <span class="command"><strong>configure</strong></span> script).</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="internals" shape="rect"> </a>Authentication internals</h2></div></div></div><p>
+The following structure describes an authentication module:</p><div class="blockquote"><blockquote class="blockquote"><div class="example"><a id="authstaticinfo" shape="rect"> </a><p class="title"><strong>Example 1. struct authstaticinfo</strong></p><div class="example-contents"><pre class="programlisting" xml:space="preserve">
+struct authstaticinfo {
+	const char *auth_name;
+	int (*auth_func)(const char *, const char *, char *, int,
+			 int (*)(struct authinfo *, void *),
+			 void *);
+	int (*auth_prefunc)(const char *, const char *,
+			    int (*)(struct authinfo *, void *),
+			    void *);
+	void (*auth_cleanupfunc)();
+	int (*auth_changepwd)(const char *, /* service */
+			      const char *, /* userid */
+			      const char *, /* oldpassword */
+			      const char *); /* new password */
+
+	void (*auth_idle)();
+	/* Not null - gets called every 5 mins when we're idle */
+
+	void (*auth_enumerate)( void(*cb_func)(const char *name,
+					       uid_t uid,
+					       gid_t gid,
+					       const char *homedir,
+					       const char *maildir,
+					       void *void_arg),
+				void *void_arg);
+	} ;
+</pre></div></div><br class="example-break" clear="none"/></blockquote></div><p>
+An authentication module is a shared library that defines a single function
+called
+<span class="quote">“<span class="quote">courier_auth_<em class="replaceable"><code>NAME</code></em>_init</span>”</span>, where
+<span class="quote">“<span class="quote">NAME</span>”</span> is the name of the authentication module.
+The shared library does not need to export any other symbols, this is the
+only function that needs to be exported.
+The function returns a pointer to the <span class="structname">authstaticinfo</span>
+structure.
+For example, the relevant code from the <code class="literal">authmysql</code> module is:
+</p><div class="blockquote"><blockquote class="blockquote"><div class="example"><a id="authmysqlex" shape="rect"> </a><p class="title"><strong>Example 2. authmysql</strong></p><div class="example-contents"><pre class="programlisting" xml:space="preserve">
+static struct authstaticinfo authmysql_info={
+	"authmysql",
+	auth_mysql,
+	auth_mysql_pre,
+	auth_mysql_cleanup,
+	auth_mysql_changepw,
+	auth_mysql_cleanup,
+	auth_mysql_enumerate};
+
+
+struct authstaticinfo *courier_authmysql_init()
+{
+	return &amp;authmysql_info;
+}
+</pre></div></div><br class="example-break" clear="none"/></blockquote></div><p>
+<code class="function">auth_func</code> points to a function that handles an
+authentication request.  The function is invoked as follows:</p><div class="blockquote"><blockquote class="blockquote"><div class="example"><a id="auth_func" shape="rect"> </a><p class="title"><strong>Example 3. auth_func</strong></p><div class="example-contents"><pre class="programlisting" xml:space="preserve">
+int result=auth_func(const char *service, const char *authtype,
+			const char *authdata,
+			int (*callback_func)(struct authinfo *, void *),
+			void *callback_arg);
+</pre></div></div><br class="example-break" clear="none"/></blockquote></div><p>
+<span class="quote">“<span class="quote">service</span>”</span> is the name of the service being authenticated,
+such as <span class="quote">“<span class="quote"><code class="literal">imap</code></span>”</span> or
+<span class="quote">“<span class="quote"><code class="literal">pop3</code></span>”</span>.
+<span class="quote">“<span class="quote">authtype</span>”</span> defines the authentication format,
+and <span class="quote">“<span class="quote">authdata</span>”</span> is the actual authentication request.</p><p>
+Two authentication formats are defined at this time.
+The <span class="quote">“<span class="quote">authtype</span>”</span> string is set to one of the following
+strings:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="quote">“<span class="quote">login</span>”</span></span></dt><dd><p>
+Tradition userid/password authentication.
+<code class="literal">authdata</code> points to a string that consists of:
+the userid; a newline character; the password; a final newline
+character.</p></dd><dt><span class="term"><span class="quote">“<span class="quote">cram-md5</span>”</span>, or <span class="quote">“<span class="quote">cram-sha1</span>”</span></span></dt><dd><p>
+Challenge/response authentication.
+<code class="literal">authdata</code> points to a string that consists of:
+the base64-encoded challenge; a newline character;
+the base64-encoded response string; and a final newline
+character.  Furthermore, the base64-encoded response string consists of:
+the login ID, a space character, and the response as a hexadecimal
+string (yes, base64-encoding of the response string is not strictly
+necessary).</p></dd></dl></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+Not all authentication modules may implement all authentication formats.
+An authentication module that does not implement a particular authentication
+format should handle it the same way as an invalid login ID.</p></div><p>
+The authentication function should return a negative value if the login ID
+is invalid. The authentication library will try the next authentication
+module.</p><p>
+The authentication function should return a positive value if the login ID
+is valid, but the password is invalid. The authentication library will not
+try any more authentication modules.</p><p>
+Otherwise, the authentication module should call the
+<code class="function">callback_func</code> function, and return the same value that's
+returned by this function.</p><p>
+The authentication module should pass through <code class="literal">callback_arg</code>
+to the callback function as a second argument.
+The first argument is a pointer to the
+<span class="structname">authinfo</span> structure, which is described in detail
+in the
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>
+manual page.
+The authentication module is responsible for allocating this structure.
+After the callback function returns this structure can be deallocated.
+The authentication module initializes the following fields:</p><p>
+<code class="function">auth_pre_func</code> points to a function that obtains
+account information.  The function is invoked as follows:</p><div class="blockquote"><blockquote class="blockquote"><div class="example"><a id="auth_pre_func" shape="rect"> </a><p class="title"><strong>Example 4. auth_pre_func</strong></p><div class="example-contents"><pre class="programlisting" xml:space="preserve">
+int auth_pre_func(const char *user, const char *service,
+                  int (*callback)(struct authinfo *, void *), void *arg);
+</pre></div></div><br class="example-break" clear="none"/></blockquote></div><p>
+This function does the same thing as <span class="quote">“<span class="quote">auth_func</span>”</span> except that
+the password is not actually verified.
+If the account exists, the callback function is invoked with the
+same callback arguments.</p><p>
+<code class="function">auth_cleanup_func</code> points to a function that will be
+invoked just before the authentication module is uninstalled, giving it
+the opportunity for some last-minute cleanup.</p><p>
+<code class="function">auth_idle</code> points to a function that will be
+invoked when no authentication requests are received for a couple of minutes,
+giving the authentication module an opportunity to close any database
+connections, so that they do not get shut down by the server, for inactivity,
+resulting in an error the next time an authentication request is
+received.</p><p>
+<code class="function">auth_changepwd</code> points to a function that will be
+invoked to change a password on an account, as follows.</p><div class="blockquote"><blockquote class="blockquote"><div class="example"><a id="auth_changepwd" shape="rect"> </a><p class="title"><strong>Example 5. auth_changepwd</strong></p><div class="example-contents"><pre class="programlisting" xml:space="preserve">
+int auth_changepwd(const char *service, const char *user,
+			const char *oldpw, const char *newpw);
+</pre></div></div><br class="example-break" clear="none"/></blockquote></div><p>
+<code class="literal">service</code> is the name of the service whose password is to
+be changed (such as <span class="quote">“<span class="quote">imap</span>”</span> or <span class="quote">“<span class="quote">pop3</span>”</span>).
+<code class="function">auth_changepwd</code> should return 0 if the password was
+changed succesfully, a negative value if <code class="literal">user</code> is invalid
+(the next authentication module will be tried), or a positive value if
+the password change request failed (no more modules will be tried).</p><p>
+<code class="function">auth_enumerate</code> points to a function that enumerates
+the list of all login IDs known to the authentication module.
+The first argument <code class="function">auth_enumerate</code> is a callback
+function. <code class="function">auth_enumerate</code> invokes the callback
+function once for each login ID, supplying the login ID, the userid,
+groupid, home directory and maildir as arguments.
+The last argument to the callback function is passed through from the
+second argument to <code class="function">auth_enumerate</code>.</p><p>
+After enumerating all login IDs <code class="function">auth_enumerate</code> calls
+the callback function one last time, with a NULL pointer for the login ID,
+then returns.  If an error is encountered while enumerating the login IDs,
+<code class="function">auth_enumerate</code> terminates without invoking
+the callback function with a NULL login ID.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="files" shape="rect"> </a>FILES</h2></div></div></div><p>
+<code class="filename"> @authdaemonrc@</code> - <span class="command"><strong>authdaemond</strong></span> configuration file</p><p>
+<code class="filename"> @authldaprc@</code> - <span class="command"><strong>authldap</strong></span> configuration file</p><p>
+<code class="filename"> @authmysqlrc@</code> - <span class="command"><strong>authmysql</strong></span> configuration file</p><p>
+<code class="filename"> @authsqliterc@</code> - <span class="command"><strong>authsqlite</strong></span> configuration file</p><p>
+<code class="filename"> @authpgsqlrc@</code> - <span class="command"><strong>authpgsql</strong></span> configuration file</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="seealso" shape="rect"> </a>SEE ALSO</h2></div></div></div><p>
+<a class="ulink" href="courier.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">courier</span>(8)</span></a>,
+
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a></p></div></div></body></html>

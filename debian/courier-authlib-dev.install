@@ -1,0 +1,6 @@
+/usr/bin/courierauthconfig
+/usr/include
+/usr/lib/courier-authlib/*.a
+/usr/lib/libcourierauth*.a
+/usr/lib/libcourierauth*.so
+/usr/share/man/man3

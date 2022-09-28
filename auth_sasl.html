@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_sasl</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-sasl" title="auth_sasl"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-sasl" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_sasl, auth_sasl_ex — <acronym class="acronym">SASL</acronym> implementation</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauthsasl.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_sasl</strong>(</code></td><td rowspan="1" colspan="1">const char *<var class="pdparam">method</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">initialresponse</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char *<var class="pdparam">(*conversation_func)</var><code>(</code>const char *, void *)<code>)</code>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">void *<var class="pdparam">callback_arg</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char **<var class="pdparam">authtype_ret</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char **<var class="pdparam">authdata_ret</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_sasl_ex</strong>(</code></td><td rowspan="1" colspan="1">const char *<var class="pdparam">method</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">initialresponse</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">externalauth</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char *<var class="pdparam">(*conversation_func)</var><code>(</code>const char *, void *)<code>)</code>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">void *<var class="pdparam">callback_arg</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char **<var class="pdparam">authtype_ret</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">char **<var class="pdparam">authdata_ret</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_sasl_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<code class="function">auth_sasl</code>
+is a generic <acronym class="acronym">SASL</acronym> server implementation.
+<em class="parameter"><code>method</code></em> is the requested <acronym class="acronym">SASL</acronym>
+method.
+At this time
+<code class="function">auth_sasl</code>
+knows how to handle the following SASL methods:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">LOGIN</code></p></li><li class="listitem"><p><code class="literal">PLAIN</code></p></li><li class="listitem"><p><code class="literal">CRAM-MD5</code></p></li><li class="listitem"><p><code class="literal">CRAM-SHA1</code></p></li></ul></div><p>
+<em class="parameter"><code>initialresponse</code></em>
+is a base64-encoded initial response provided in the client's
+<acronym class="acronym">SASL</acronym> request.
+<em class="parameter"><code>initialresponse</code></em>
+must be <code class="literal">NULL</code> if an initial response was not included in
+the client's <acronym class="acronym">SASL</acronym> request.</p><p>
+<em class="parameter"><code>conversation_func</code></em>
+is the application-implemented <acronym class="acronym">SASL</acronym>
+conversation callback function.
+<em class="parameter"><code>conversation_func</code></em>
+receives a base64-encoded <acronym class="acronym">SASL</acronym> prompt,
+and the <em class="parameter"><code>callback_arg</code></em>
+argument to <code class="function">auth_sasl</code>.
+<em class="parameter"><code>conversation_func</code></em>
+must return a buffer containing the base64-encoded reply from the client.
+<code class="function">auth_sasl</code>
+will
+<span class="citerefentry"><span class="refentrytitle">free</span>(3)</span>
+this buffer when it's done.
+<em class="parameter"><code>conversation_func</code></em>
+should return <code class="literal">NULL</code>
+to abort the <acronym class="acronym">SASL</acronym> conversation.</p><p>
+<code class="function">auth_sasl_ex</code> is a version of
+<code class="function">auth_sasl</code> that recognizes the <code class="literal">EXTERNAL</code>
+<acronym class="acronym">SASL</acronym> method. It takes an extra parameter,
+<em class="parameter"><code>externalauth</code></em>. This parameter should be set to indicate
+an login that was authenticated via some other means, such as, perhaps,
+an <acronym class="acronym">SSL</acronym> certificate, or <code class="literal">NULL</code> if no
+externally-authenticated identity was established.</p><p>
+If <em class="parameter"><code>method</code></em> is not <code class="literal">EXTERNAL</code>,
+<code class="function">auth_sasl_ex</code> is identical to
+<code class="function">auth_sasl</code>, and <em class="parameter"><code>externalauth</code></em> is
+ignored. Otherwise, if <em class="parameter"><code>method</code></em> is
+<code class="literal">EXTERNAL</code> and <em class="parameter"><code>externalauth</code></em> is not
+<code class="literal">NULL</code>, <code class="function">auth_sasl_ex</code> returns
+<code class="literal">AUTHSASL_OK</code>, and sets
+<em class="parameter"><code>*authtype_ret</code></em> and
+<em class="parameter"><code>*authdata_ret</code></em> accordingly, so that the subsequent
+invocation of <code class="function">auth_generic</code>() returns authentication
+information for the login ID specified by
+<em class="parameter"><code>externalauth</code></em>.</p></div><div class="refsect1"><a id="auth_sasl_returns" shape="rect"> </a><h2>RETURNS</h2><p>
+If the <acronym class="acronym">SASL</acronym> conversation succesfully completes,
+<code class="function">auth_sasl</code> or <code class="function">auth_sasl_ex</code>
+initializes <em class="parameter"><code>*authtype_ret</code></em> and
+<em class="parameter"><code>*authdata_ret</code></em>.
+They will be set to a
+<span class="citerefentry"><span class="refentrytitle">malloc</span>(3)</span>-ed
+buffers that can be directly passed as arguments to
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>.
+It is the application's responsibility to
+<span class="citerefentry"><span class="refentrytitle">free</span>(3)</span>
+these buffers when it's done with them.</p><p>
+<code class="function">auth_sasl</code> or <code class="function">auth_sasl_ex</code>
+returns
+<code class="literal">AUTHSASL_OK</code> when the
+<acronym class="acronym">SASL</acronym> conversation succesfully completes, and
+<em class="parameter"><code>*authtype_ret</code></em> and
+<em class="parameter"><code>*authdata_ret</code></em> are succesfully assembled.
+Any other return indicates an error condition.
+Right now two error conditions are defined:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">AUTHSASL_ABORTED</code></span></dt><dd><p>
+The <acronym class="acronym">SASL</acronym> conversation was aborted by the client.</p></dd><dt><span class="term"><code class="literal">AUTHSASL_ERROR</code></span></dt><dd><p>
+General error (insufficient memory, or some other reason).
+Check <code class="varname">errno</code> for any clues.</p></dd></dl></div></div><div class="refsect1"><a id="auth_sasl_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+ 
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>.</p></div></div></body></html>

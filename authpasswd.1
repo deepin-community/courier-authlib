@@ -1,0 +1,100 @@
+'\" t
+.\"  <!-- Copyright 2004-2008 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: authpasswd
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTHPASSWD" "1" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+authpasswd \- Generate login passwords
+.SH "SYNOPSIS"
+.HP \w'\fBauthpasswd\fR\ 'u
+\fBauthpasswd\fR [method]
+.SH "DESCRIPTION"
+.PP
+\fBauthpasswd\fR
+is a helper utility that generates encrypted passwords for the Courier authentication library\&. The Courier authentication library is capable of using several different encryption methods for storing passwords\&.
+\fBauthpasswd\fR
+issues a password prompt\&. Enter the same password twice (for verification purposes)\&.
+\fBauthpasswd\fR
+computes and prints the encrypted password\&. The encrypted password can be inserted verbatim into the appropriate account record that\*(Aqs processed by the authentication library\*(Aqs
+authmysql,
+authpgsql,
+authsqlite, or
+authldap
+module\&.
+.PP
+\fImethod\fR
+may be set to one of the following literals:
+.PP
+crypt
+.RS 4
+Use the traditional
+DES\-based encrypted password\&.
+.RE
+.PP
+md5
+.RS 4
+Compute a base64\-encoded
+MD5
+password hash\&.
+.RE
+.PP
+md5raw
+.RS 4
+Compute a hexadecimal\-encoded
+MD5
+password hash\&.
+.RE
+.PP
+sha1
+.RS 4
+Compute a
+SHA1
+password hash\&.
+.RE
+.PP
+ssha
+.RS 4
+Compute a salted
+SHA1
+password hash\&.
+.RE
+.PP
+sha256
+.RS 4
+Compute a
+SHA256
+password hash\&.
+.RE
+.PP
+If not specified,
+\fImethod\fR
+defaults to the modified\-MD5
+password encryption algorithm that\*(Aqs used in Linux (note that this is different from the
+\(lqmd5\(rq
+password hash method)\&.

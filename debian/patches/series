@@ -1,0 +1,6 @@
+0001-Don-t-mangle-permissions-on-install-time-as-it-s-tak.patch
+0002-Rip-AC_PROG_SYSCONFTOOL-macro-to-m4-directory.patch
+0005-libcourierauth-libraries-are-normal-shared-libraries.patch
+0007-add-missing-include.patch
+0008-fix-perl-shebang.patch
+0009-cross.patch

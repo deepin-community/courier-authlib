@@ -1,0 +1,2 @@
+/etc/courier/authldaprc
+/usr/lib/courier-authlib/libauthldap.so*

@@ -1,0 +1,83 @@
+'\" t
+.\"  <!-- Copyright 2015 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: auth_mkhomedir
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTH_MKHOMEDIR" "3" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+auth_mkhomedir \- Autocreate a new account\*(Aqs home directory
+.SH "SYNOPSIS"
+.sp
+.nf
+#include <courierauth\&.h>
+.fi
+.HP \w'int\ rc=auth_mkhomedir('u
+.BI "int rc=auth_mkhomedir(struct\ authinfo\ *" "auth" ");"
+.SH "DESCRIPTION"
+.PP
+A
+\fIcallback_func\fR
+that\*(Aqs passed as a parameter to
+\m[blue]\fB\fBauth_getuserinfo_meta\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2
+can invoke this function to automatically create a new account\*(Aqs home directory, if the authlib client is running as root, forwarding the
+authinfo
+pointer from the callback\&.
+.PP
+\fBauth_mkhomedir\fR() checks if the
+\fBAUTH_MKHOMEDIR_SKEL\fR
+environment variable is set, and if the authenticated account\*(Aqs home directory does not exist\&. If the environment variable is set it must point to a directory like
+/etc/skel
+that contains a template for the contents of a new account\*(Aqs home directory\&.
+.PP
+If
+\fBAUTH_MKHOMEDIR_SKEL\fR
+is not set, or if the home directory exists,
+\fBauth_mkhomedir\fR() does nothing and returns 0\&. Otherwise the account\*(Aqs home directory gets created, and the contents of the
+\fBAUTH_MKHOMEDIR_SKEL\fR
+directory get recursively copied into the new home directory\&. The permissions of
+\fBAUTH_MKHOMEDIR_SKEL\fR
+and its contents are preserved, and the owner userid and groupid is set to the authenticated account\*(Aqs userid and groupid\&.
+.SH "RETURNS"
+.PP
+\fBauth_mkhomedir\fR() returns a non\-zero value if an error occured while creating the new account\*(Aqs home directory\&.
+\fBauth_mkhomedir\fR() returns zero if the new account\*(Aqs home directory was created successfully, or if the account\*(Aqs home directory already exists\&.
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBauthlib\fR(3)\fR\m[]\&\s-2\u[2]\d\s+2,
+\m[blue]\fB\fBauth_getuserinfo_meta\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2\&.
+.SH "NOTES"
+.IP " 1." 4
+\fBauth_getuserinfo_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_getuserinfo.html
+.RE
+.IP " 2." 4
+\fBauthlib\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/authlib.html
+.RE

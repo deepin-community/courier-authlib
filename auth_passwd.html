@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_passwd</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-passwd" title="auth_passwd"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-passwd" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_passwd — Change account's password</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauth.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_passwd</strong>(</code></td><td rowspan="1" colspan="1">const char *<var class="pdparam">service</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">username</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">oldpassword</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">newpassword</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_passwd_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+If <em class="parameter"><code>username</code></em>'s password is
+<em class="parameter"><code>oldpassword</code></em>, it is replaced with
+<em class="parameter"><code>newpassword</code></em>.
+<em class="parameter"><code>service</code></em> identifies which so-called "service"'s
+password is changed; like <span class="quote">“<span class="quote">imap</span>”</span> or <span class="quote">“<span class="quote">pop3</span>”</span>.
+Some Courier authentication library's back-end module can use different
+passwords for different services.
+<em class="parameter"><code>service</code></em> is ignored if this is not the case.</p></div><div class="refsect1"><a id="auth_passwd_returns" shape="rect"> </a><h2>RETURNS</h2><p>
+<code class="function">auth_passwd</code> returns 0 if the password was
+succesfully changed.
+A non-0 error code indicates a failure..</p></div><div class="refsect1"><a id="auth_passwd_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+ 
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_login.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_enumerate.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_enumerate</span>(3)</span></a>.</p></div></div></body></html>

@@ -1,0 +1,24 @@
+=head1 NAME
+
+authenumerate - Fetches all known users from the authentication modules
+
+=head1 SYNOPSIS
+
+authenumerate [ -m MODULE ]
+
+=head1 DESCRIPTION
+
+B<authenumerate> lists all known users from the authentication modules, 
+including uid, gid and home directory. Its use is documented in 
+F</usr/share/doc/courier-base/README.sharedfolders.txt.gz>.
+It may also be useful to test the authentication modules. 
+
+=head1 SEE ALSO
+
+L<courierauthtest>(8)
+
+=head1 AUTHOR
+
+This manual page was written by Willi Mann <willi@wm1.at>
+for the Debian GNU/Linux system.
+

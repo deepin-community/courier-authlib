@@ -1,0 +1,8 @@
+/etc/courier/authdaemonrc
+/usr/sbin/authdaemond
+/usr/sbin/authenumerate
+/usr/sbin/authpasswd
+/usr/sbin/authtest
+/usr/share/man/man1/authpasswd.1
+/usr/share/man/man1/authtest.1
+/usr/share/man/man8/authenumerate.8

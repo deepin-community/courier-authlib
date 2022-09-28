@@ -1,0 +1,24 @@
+From: =?utf-8?q?Ond=C5=99ej_Sur=C3=BD?= <ondrej@sury.org>
+Date: Wed, 16 Mar 2016 10:16:21 +0100
+Subject: libcourierauth* libraries are normal shared libraries,
+ treat them as such
+
+---
+ Makefile.am | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -19,9 +19,9 @@
+ pkglibexecdir=$(libexecdir)/courier-authlib
+ pkglibexec_SCRIPTS=authsystem.passwd
+ 
+-pkglib_LTLIBRARIES=libcourierauth.la \
+-	libcourierauthcommon.la libcourierauthsasl.la libcourierauthsaslclient.la \
+-	$(modules)
++lib_LTLIBRARIES=libcourierauth.la \
++	libcourierauthcommon.la libcourierauthsasl.la libcourierauthsaslclient.la
++pkglib_LTLIBRARIES=$(modules)
+ sbin_SCRIPTS=authdaemond
+ sbin_PROGRAMS=authtest authenumerate authpasswd
+ bin_PROGRAMS=courierauthconfig

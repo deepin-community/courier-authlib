@@ -1,0 +1,230 @@
+'\" t
+.\"  <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: userdb
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "USERDB" "8" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+userdb \- manipulate @userdb@
+.SH "SYNOPSIS"
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR {\fIaddr\fR} set {\fIfield\fR=\fIvalue\fR...}
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR {\fIaddr\fR} unset {\fIfield\fR...}
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR {\fIaddr\fR} del
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR {\fIpath/addr\fR} [set | unset | del] \&.\&.\&.
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR \-f {\fIfile\fR} {\fIadr\fR} [set | unset | del] \&.\&.\&.
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR \-show {\fIpath\fR}
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR \-show {\fIpath\fR} {\fIaddr\fR}
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR \-show \-f {\fIfile\fR}
+.HP \w'\fBuserdb\fR\ 'u
+\fBuserdb\fR \-show \-f {\fIfile\fR} {\fIaddr\fR}
+.SH "DESCRIPTION"
+.PP
+\fBuserdb\fR
+is a convenient script to individually manipulate entries in
+@userdb@\&. See
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2
+for a description of its contents\&.
+@userdb@
+can always be edited using any text editor, but
+\fBuserdb\fR
+is a convenient way to modify this file from another script\&.
+.PP
+@userdb@
+can also be a subdirectory, instead of a file\&. Specify
+\fB\fIfoo/bar/addr\fR\fR
+to manipulate
+\fB\fIaddr\fR\fR
+in the file
+@userdb@\fI/foo/bar\fR\&. You can also use the
+\fB\-f\fR
+flag:
+\fB\-f \fR\fB\fI@userdb@/foo/bar\fR\fR
+is equivalent\&. Use whatever form makes the most sense to you\&.
+.PP
+@userdb@
+must not have any group or world permissions\&. That\*(Aqs because its contents may include system passwords (depending upon the application which uses this virtual user account database)\&.
+.PP
+Each line in
+@userdb@
+takes following form:
+
+\fIaddr\fR<TAB>\fIfield\fR=\fIvalue\fR|\fIfield\fR=\fIvalue\fR\&.\&.\&.
+.PP
+\fIaddr\fR
+specifies a unique virtual address\&. It is followed by a single tab character, then a list of
+\fIfield\fR=\fIvalue\fR
+pairs, separated by vertical slash characters\&. See
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2
+for field definitions\&.
+.PP
+A text editor can be used to add blank lines or comments in
+@userdb@\&. Any blank lines or comments are ignored by the
+\fBuserdb\fR
+script\&.
+.PP
+The names of the actual fields, and their contents, are defined entirely by applications that use the
+@userdb@
+database, the
+\fBuserdb\fR
+command just adds or removes arbitrary fields\&.
+.PP
+For example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fBuserdb default/info set mail=/home/mail/info\fR
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This command accesses the address "info" in
+@userdb@/default\&.
+.PP
+If the second argument to
+\fBuserdb\fR
+is "\fIset\fR", the remaining arguments are taken as
+\fI\fIfield\fR\fR\fI=\fR\fI\fIvalue\fR\fR
+pairs, which are added to the record for
+\fIaddr\fR\&. If there is no record for
+\fIaddr\fR, a new record will be appended to the file\&. If
+\fIaddr\fR
+exists, any existing values of any specified fields are removed\&. If
+\fI=\fR\fI\fIvalue\fR\fR
+is missing,
+\fBuserdb\fR
+stops and prompts for it\&. This is useful if you\*(Aqre setting a password field, where you do not want to specify the password on the command line, which can be seen by the
+\fBps\fR(1)
+command\&. If
+\fBuserdb\fR
+is being executed by a script, the value can be provided on standard input\&.
+.PP
+Use "\fIunset\fR" to delete fields from an existing record\&. Use "\fIdel\fR" to delete all fields in the existing record, plus the record itself\&.
+.SS "DISPLAYING @userdb@"
+.PP
+If the first argument to userdb is
+\fI\-show\fR,
+\fBuserdb\fR
+displays the contents of
+@userdb@\&. If
+@userdb@
+is a subdirectory,
+\fI\fIpath\fR\fR
+must refer to a specific file in
+@userdb@\&. The
+\fI\-f\fR
+option can be used instead of
+\fI\fIpath\fR\fR
+in order to specify an arbitrary file\&.
+.PP
+If
+\fI\fIaddr\fR\fR
+is not specified,
+\fBuserdb\fR
+produces a list, on standard output, containing all addresses found in the file, on per line\&. If
+\fI\fIaddr\fR\fR
+is specified,
+\fBuserdb\fR
+produces a list, on standard output, of all the fields in
+@userdb@
+for this
+\fI\fIaddr\fR\fR\&.
+.SS "International domains"
+.PP
+\fI\fIaddr\fR\fRs with international domains should use UTF\-8 to specify an international domain name:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fB
+userdb postmaster@test\&.испытание set \e
+        home=/home/postmaster\&.test\&.com uid=999 gid=999\fR
+.fi
+.if n \{\
+.RE
+.\}
+.SS "REBUILDING @userdb@\&.dat"
+.PP
+The actual virtual account/address database is
+@userdb@\&.dat\&. This is a binary database file\&.
+\fB@userdb@\fR
+is the plain text version\&. After running
+\fBuserdb\fR, execute the
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2
+command to rebuild
+@userdb@\&.dat
+for the changes to take effect\&.
+.SH "BUGS"
+.PP
+\fI\fIaddr\fR\fR
+must be unique\&. If
+@userdb@
+is a subdirectory, it\*(Aqs possible to create the same
+\fI\fIaddr\fR\fR
+in different files in the subdirectory\&. This is an error that is not currently detected by
+\fBuserdb\fR, however the subsequent
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2
+command will fail with an error message\&.
+.SH "FILES"
+.PP
+@userdb@
+\- plain text file, or directory of plain text files
+.PP
+\&.lock\&.filename
+\- lock file for
+filename
+.PP
+\&.tmp\&.filename
+\- temporary file used to create new contents of
+filename
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBmakeuserdb\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fB\fBuserdbpw\fR(8)\fR\m[]\&\s-2\u[2]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+\fBmakeuserdb\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/makeuserdb.html
+.RE
+.IP " 2." 4
+\fBuserdbpw\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/userdbpw.html
+.RE

@@ -1,0 +1,181 @@
+'\" t
+.\"  <!-- Copyright 2020 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: auth_meta
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTH_META" "3" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+auth_meta \- Authentication metadata
+.SH "SYNOPSIS"
+.sp
+.nf
+#include <courierauth\&.h>
+.fi
+.HP \w'struct\ auth_meta\ *meta=auth_meta_init_default('u
+.BI "struct auth_meta *meta=auth_meta_init_default(void);"
+.HP \w'void\ auth_meta_destroy_default('u
+.BI "void auth_meta_destroy_default(struct\ auth_meta\ *" "meta" ");"
+.SH "DESCRIPTION"
+.PP
+The
+auth_meta
+structure provides additional, optional metadata for
+\fBauth_login_meta\fR(3),
+\fBauth_generic_meta\fR(3), and
+\fBauth_getuserinfo_meta\fR(3)\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+struct auth_meta {
+    char **envvars;
+};
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Description of the above fields:
+.PP
+envvars
+.RS 4
+An array of opaque
+\(lq\fIname\fR=\fIvalue\fR\(rq
+strings, ending with a null pointer\&.
+.RE
+.PP
+The library recognizes the following
+\fIenvvars\fR
+variables:
+.PP
+TCPREMOTEIP
+.RS 4
+The IP address the authentication request came from\&.
+.RE
+.SS "Initializing a default auth_meta"
+.PP
+\fBauth_meta_init_default\fR
+creates an
+auth_meta
+with default values\&. A NULL pointer gets returned if the object could not be created\&.
+\fBauth_meta_destroy_default\fR
+frees the object and all memory used by it, after it is no longer needed\&.
+.PP
+Typical usage:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBauth_meta_init_default\fR
+gets called to create an
+auth_meta\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The pointer to the new
+auth_meta
+gets passed to
+\fBauth_login_meta\fR(3),
+\fBauth_generic_meta\fR(3)
+or
+\fBauth_getuserinfo_meta\fR(3)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBauth_meta_destroy_default\fR
+deallocates and frees
+auth_meta\*(Aqs memory\&.
+.RE
+.SS "Default auth_meta values"
+.PP
+\fBauth_meta_init_default\fR
+creates an
+auth_meta
+with the following values:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The
+\fBTCPREMOTEIP\fR
+environment variable, if set, is placed in the
+TCPREMOTEIP
+\fIenvvars\fR
+.RE
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBauthlib\fR(3)\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fB\fBauth_login_meta\fR(3)\fR\m[]\&\s-2\u[2]\d\s+2,
+\m[blue]\fB\fBauth_generic_meta\fR(3)\fR\m[]\&\s-2\u[3]\d\s+2,
+\m[blue]\fB\fBauth_getuserinfo_meta\fR(3)\fR\m[]\&\s-2\u[4]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+\fBauthlib\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/authlib.html
+.RE
+.IP " 2." 4
+\fBauth_login_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_login.html
+.RE
+.IP " 3." 4
+\fBauth_generic_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_generic.html
+.RE
+.IP " 4." 4
+\fBauth_getuserinfo_meta\fR(3)
+.RS 4
+\%http://www.courier-mta.org/authlib/auth_getuserinfo.html
+.RE

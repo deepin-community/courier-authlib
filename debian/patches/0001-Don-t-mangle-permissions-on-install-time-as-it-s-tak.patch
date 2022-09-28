@@ -1,0 +1,70 @@
+From: =?utf-8?q?Ond=C5=99ej_Sur=C3=BD?= <ondrej@sury.org>
+Date: Mon, 8 Feb 2016 14:59:54 +0100
+Subject: Don't mangle permissions on install time as it's take care of in
+ Debian package
+
+---
+ Makefile.am | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -121,8 +121,6 @@
+ 	$(mkinstalldirs) $(DESTDIR)`dirname @authpgsqlrc@` || :
+ 	$(INSTALL_DATA) -m 660 $(srcdir)/authpgsqlrc \
+ 		$(DESTDIR)@authpgsqlrc@.dist
+-	-chown @mailuser@ $(DESTDIR)@authpgsqlrc@.dist
+-	-chgrp @mailgroup@ $(DESTDIR)@authpgsqlrc@.dist
+ 
+ uninstall-authpgsqlrc:
+ 	rm -f $(DESTDIR)@authpgsqlrc@.dist
+@@ -154,8 +152,6 @@
+ 	$(mkinstalldirs) $(DESTDIR)`dirname @authldaprc@` || :
+ 	$(INSTALL_DATA) -m 660 $(srcdir)/authldaprc \
+ 		$(DESTDIR)@authldaprc@.dist
+-	-chown @mailuser@ $(DESTDIR)@authldaprc@.dist
+-	-chgrp @mailgroup@ $(DESTDIR)@authldaprc@.dist
+ 
+ uninstall-authldaprc:
+ 	rm -f $(DESTDIR)@authldaprc@.dist
+@@ -185,8 +181,6 @@
+ 	$(mkinstalldirs) $(DESTDIR)`dirname @authmysqlrc@` || :
+ 	$(INSTALL_DATA) -m 660 $(srcdir)/authmysqlrc \
+ 		$(DESTDIR)@authmysqlrc@.dist
+-	-chown @mailuser@ $(DESTDIR)@authmysqlrc@.dist
+-	-chgrp @mailgroup@ $(DESTDIR)@authmysqlrc@.dist
+ 
+ uninstall-authmysqlrc:
+ 	rm -f $(DESTDIR)@authmysqlrc@.dist
+@@ -216,8 +210,6 @@
+ 	$(mkinstalldirs) $(DESTDIR)`dirname @authsqliterc@` || :
+ 	$(INSTALL_DATA) -m 660 $(srcdir)/authsqliterc \
+ 		$(DESTDIR)@authsqliterc@.dist
+-	-chown @mailuser@ $(DESTDIR)@authsqliterc@.dist
+-	-chgrp @mailgroup@ $(DESTDIR)@authsqliterc@.dist
+ 
+ uninstall-authsqliterc:
+ 	rm -f $(DESTDIR)@authsqliterc@.dist
+@@ -265,8 +257,6 @@
+ 	sed 's/@ALLMODULES@/$(modules:lib%.la=%)/' <authdaemonrc >authdaemonrc.tmp
+ 	$(INSTALL_DATA) -m 660 authdaemonrc.tmp $(DESTDIR)@authdaemonrc@.dist
+ 	rm -f authdaemonrc.tmp
+-	-chown @mailuser@ $(DESTDIR)@authdaemonrc@.dist
+-	-chgrp @mailgroup@ $(DESTDIR)@authdaemonrc@.dist
+ 
+ uninstall-authdaemonrc:
+ 	rm -f $(DESTDIR)@authdaemonrc@.dist
+@@ -444,13 +434,9 @@
+ 	$(mkinstalldirs) $(DESTDIR)$(sbindir) || :
+ 	$(mkinstalldirs) $(DESTDIR)$(pkglibexecdir) || :
+ 	chmod 755 $(DESTDIR)$(pkglibexecdir)
+-	-chown @mailuser@ $(DESTDIR)$(pkglibexecdir)
+-	-chgrp @mailgroup@ $(DESTDIR)$(pkglibexecdir)
+ 	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) authdaemondprog $(DESTDIR)$(pkglibexecdir)/authdaemond
+ 	$(mkinstalldirs) $(DESTDIR)@authdaemonvar@ || :
+ 	chmod 750 $(DESTDIR)@authdaemonvar@
+-	-chown @mailuser@ $(DESTDIR)@authdaemonvar@
+-	-chgrp @mailgroup@ $(DESTDIR)@authdaemonvar@
+ 	test "@LIBAUTHUSERDB@" = "" && exit 0 ;\
+ 		$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) libs/makedat/makedatprog \
+ 				$(DESTDIR)$(pkglibexecdir)/makedatprog ; \

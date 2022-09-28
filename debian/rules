@@ -1,0 +1,91 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#DH_VERBOSE = 1
+
+# see EXAMPLES in dpkg-buildflags(1) and read /usr/share/dpkg/*
+DPKG_EXPORT_BUILDFLAGS = 1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+# the build captures $SHELL, hard-wire to "/bin/sh"
+export CONFIG_SHELL=/bin/sh
+
+include /usr/share/dpkg/default.mk
+
+# main packaging script based on dh7 syntax
+%:
+	dh $@
+
+COMMON_CONFOPTS=--with-authdaemonvar=/run/courier/authdaemon \
+		--with-pkgconfdir=/etc/courier \
+		--libdir=\$${prefix}/lib \
+		--libexecdir=\$${prefix}/lib/courier \
+		--datadir=\$${prefix}/lib/courier \
+		--localstatedir=/var/lib/courier \
+		--with-mailuser=courier \
+		--with-mailgroup=courier \
+		--without-socks \
+		--with-authpam \
+		--with-authpipe \
+		--without-authpwd \
+		--with-authmysql \
+		--with-mysql-includes=/usr/include/mysql \
+		--with-mysql-libs=/usr/lib \
+		--with-authmysqlrc=/etc/courier/authmysqlrc \
+		--with-authpgsql \
+		--with-pgsql-includes=`pg_config --includedir` \
+		--with-pgsql-libs=/usr/lib \
+		--with-authpgsqlrc=/etc/courier/authpgsqlrc \
+		--without-authshadow \
+		--with-authldap \
+		--with-authldaprc=/etc/courier/authldaprc \
+		--with-authsqlite="" \
+		--with-authsqliterc=/etc/courier/authsqliterc \
+		--with-authcram \
+		--with-db=gdbm \
+		--without-fcgi \
+		--with-htmllibdir=/usr/share/sqwebmail \
+		--with-ispell=/usr/bin/ispell \
+		--enable-userdb \
+		--enable-syslog=1 \
+		--disable-root-check \
+		--with-locking-method=fcntl \
+
+override_dh_auto_configure:
+	dh_auto_configure -- PS=/bin/ps $(COMMON_CONFOPTS)
+
+override_dh_install:
+	pod2man --center='Debian GNU/Linux Documentation' \
+		--release='Debian GNU/Linux '`cat /etc/debian_version` \
+		--section=8 debian/authenumerate.pod \
+		--verbose \
+		> debian/tmp/usr/share/man/man8/authenumerate.8
+
+# Change default module list
+	perl -pe 's/^authmodulelist=".*?"/authmodulelist="authpam"/' debian/tmp/etc/courier/authdaemonrc.dist > debian/tmp/etc/courier/authdaemonrc
+	rm -v debian/tmp/etc/courier/authdaemonrc.dist
+
+# Change default LDAP server to localhost
+	perl -pe 's/^(LDAP_SERVER\s+)ldap.example.com/$$1localhost/' debian/tmp/etc/courier/authldaprc.dist > debian/tmp/etc/courier/authldaprc
+	rm -v debian/tmp/etc/courier/authldaprc.dist
+
+# Change default MySQL server to localhost
+	perl -pe 's/^(MYSQL_SERVER\s+)mysql.example.com/$$1localhost/;s%^(#?\s*MYSQL_SOCKET\s+)/.*%$$1/var/run/mysqld/mysqld.sock%' debian/tmp/etc/courier/authmysqlrc.dist > debian/tmp/etc/courier/authmysqlrc
+	rm -v debian/tmp/etc/courier/authmysqlrc.dist
+
+# Change default SQlite 3 path to /var/lib/courier/users.db
+	perl -pe 's%^(SQLITE_DATABASE\s+)/var/users.db%$$1/var/lib/courier/users.db%' debian/tmp/etc/courier/authsqliterc.dist > debian/tmp/etc/courier/authsqliterc
+	rm -v debian/tmp/etc/courier/authsqliterc.dist
+
+	mv -v debian/tmp/etc/courier/authpgsqlrc.dist debian/tmp/etc/courier/authpgsqlrc
+
+	dh_install
+	dh_missing --fail-missing

@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_login_meta</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-login" title="auth_login_meta"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-login" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_login_meta, auth_login — Validate a userid and password</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauth.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_login_meta</strong>(</code></td><td rowspan="1" colspan="1">struct auth_meta *<var class="pdparam">meta</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">service</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">userid</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">password</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">int <var class="pdparam">(*callback_func)</var><code>(</code>struct authinfo *, void *<code>)</code>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">void *<var class="pdparam">callback_arg</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_login</strong>(</code></td><td rowspan="1" colspan="1">const char *<var class="pdparam">service</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">userid</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">const char *<var class="pdparam">password</var>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">int <var class="pdparam">(*callback_func)</var><code>(</code>struct authinfo *, void *<code>)</code>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">void *<var class="pdparam">callback_arg</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_login_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<code class="function">auth_login_meta</code> verifies whether
+<em class="parameter"><code>userid</code></em> exists, and whether it's
+<em class="parameter"><code>password</code></em> is correct.
+<em class="parameter"><code>service</code></em> specifies which so-called "service" is
+being authenticated; like <span class="quote">“<span class="quote">imap</span>”</span> or <span class="quote">“<span class="quote">pop3</span>”</span>.
+<em class="parameter"><code>service</code></em> may or may not be used by the Courier
+authentication library's configured back-end module.</p><p>
+      A NULL <em class="parameter"><code>meta</code></em> is equivalent to
+      using the default <span class="structname">auth_meta</span> returned by
+      <a class="ulink" href="auth_meta.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_meta_init_default</span>(3)</span></a>.
+    </p><p>
+      <code class="function">auth_login</code>() is deprecated and should not be used
+      in new code.
+    </p></div><div class="refsect1"><a id="auth_login_returns" shape="rect"> </a><h2>RETURNS</h2><p>
+<code class="function">callback_func</code> will be invoked if
+<code class="function">auth_login</code>
+succeeds, and <code class="function">callback_func</code>'s return value becomes
+the return value from <code class="function">auth_login</code> (which should be 0, by convention).
+<code class="function">callback_func</code> will not be invoked if an error occurs,
+which is reported by a non-zero return value from <code class="function">auth_login</code>.
+By convention, a positive return value indicates an internal, temporary
+failure, such as the authentication daemon process not running; a negative
+return value indicates that this request was processed, but it failed.</p><p>
+The second argument to <code class="function">callback_func</code> will be
+<code class="function">callback_arg</code>, which is not interpreted by this
+function in any way.
+The first argument will be a pointer to the following structure:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+struct authinfo {
+	const char *sysusername;
+	const uid_t *sysuserid;
+	gid_t sysgroupid;
+	const char *homedir;
+
+	const char *address;
+	const char *fullname;
+	const char *maildir;
+	const char *quota;
+	const char *passwd;
+	const char *clearpasswd;
+
+	const char *options;
+
+	} ;
+</pre></div></blockquote></div><p>
+Description of the above fields:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">address</span></dt><dd><p>
+The authenticated login ID.</p></dd><dt><span class="term">sysusername</span></dt><dd><p>
+The authenticated account's userid and groupid can be looked up in the
+password file using <code class="literal">address</code>.
+If this field is <code class="literal">NULL</code>, obtain the userid and the groupid from
+<code class="literal">sysuserid</code> and <code class="literal">sysgroupid</code>.</p></dd><dt><span class="term">sysuserid</span></dt><dd><p>
+<code class="literal">sysuserid</code> may be <code class="literal">NULL</code> if
+<code class="literal">sysusername</code> is initialized, otherwise it's a pointer to
+the account's numeric userid.</p></dd><dt><span class="term">sysgroupid</span></dt><dd><p>
+Account's numeric groupid.
+<code class="literal">sysgroupid</code> is only used when <code class="literal">sysusername</code>
+is <code class="literal">NULL</code>.</p></dd><dt><span class="term">fullname</span></dt><dd><p>
+This is the account's full name.
+This field is optional, it may be <code class="literal">NULL</code>.</p></dd><dt><span class="term">homedir</span></dt><dd><p>
+The account's home directory.
+This field cannot be <code class="literal">NULL</code>.</p></dd><dt><span class="term">maildir</span></dt><dd><p>
+The pathname to the account's mailbox.
+This field is optional, it can be <code class="literal">NULL</code> in which case the
+default location is assumed.</p></dd><dt><span class="term">quota</span></dt><dd><p>
+Optional maildir quota on the account's mailbox (and <code class="literal">NULL</code>
+if no quota is set).</p></dd><dt><span class="term">passwd</span></dt><dd><p>
+The account's encrypted password, if available.
+If the account has a cleartext password defined, this field
+can be set to <code class="literal">NULL</code>.
+The encrypted password can take several formats:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+A traditional triple-DES crypted password, or a MD5+salt-hashed password,
+as used in Linux.</p></li><li class="listitem"><p>
+<span class="quote">“<span class="quote">{MD5}</span>”</span> followed by a base64-encoded MD5 hash
+of the password.</p></li><li class="listitem"><p>
+<span class="quote">“<span class="quote">{SHA}</span>”</span> followed by a base64-encoded SHA1 hash
+of the password.</p></li></ul></div></dd><dt><span class="term">clearpasswd</span></dt><dd><p>
+The account's cleartext password, if available.
+If the account has an encrypted password defined, this field
+can be set to <code class="literal">NULL</code>.</p></dd><dt><span class="term">options</span></dt><dd><p>
+A comma-separated list of miscellaneous account options.
+See below for more information.</p></dd></dl></div><div class="refsect2"><a id="authcallback_account_options" shape="rect"> </a><h3>Account options</h3><p>
+Depending on the configuration of the Courier authentication library,
+accounts may have individual options associated with them.
+If the authentication library configuration does not implement account
+options, the option string will be a <code class="literal">NULL</code> value.
+Otherwise it will be a comma-separated list of
+<span class="quote">“<span class="quote"><em class="replaceable"><code>option</code></em>=<em class="replaceable"><code>value</code></em></span>”</span>
+settings.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+The application is responsible for actually implementing the
+options.
+For example,
+sn authentication request for service <span class="quote">“<span class="quote">imap</span>”</span>, for example,
+will succeed provided that the userid and the password are valid,
+even if <span class="quote">“<span class="quote">disableimap=1</span>”</span> is set.
+The application's <code class="function">callback_func</code> should check for this
+condition, and return a negative return code.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+The following list of account options is a combined list of implemented
+options supported by Courier, Courier-IMAP, and
+SqWebMail packages. Some of the following information is obviously
+not applicable for a particular package.
+The inapplicable bits should be obvious.</p></div><p>
+The following options are recognized by the various Courier
+packages:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">disableimap=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, IMAP access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disablepop3=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, POP3 access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableinsecureimap=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, unencrypted IMAP access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableinsecurepop3=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, unencrypted POP3 access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disablewebmail=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, webmail access to this account should be disabled.</p></dd><dt><span class="term"><code class="literal">disableshared=</code><em class="replaceable"><code>n</code></em></span></dt><dd><p>
+If "n" is 1, this account should not have access to shared folders or be able
+to share its own folders with other people.</p></dd><dt><span class="term"><code class="literal">group=</code><em class="replaceable"><code>name</code></em></span></dt><dd><p>
+This option is used by Courier-IMAP in calculating access control lists.
+This option places the account as a member of access group
+<em class="replaceable"><code>name</code></em>.
+Instead of granting access rights on individual mail folders to individual
+accounts, the access rights can be granted to an access group
+<span class="quote">“<span class="quote">name</span>”</span>, and all members of this group get the specified access
+rights.</p><p>
+The access group name <span class="quote">“<span class="quote">administrators</span>”</span> is a reserved group.
+All accounts in the <code class="literal">administrators</code> group automatically
+receive all rights to all accessible folders.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+This option may be specified multiple times to specify that the account
+belongs to multiple account groups.</p></div></dd><dt><span class="term"><code class="literal">sharedgroup=</code><em class="replaceable"><code>name</code></em></span></dt><dd><p>
+Another option used by Courier-IMAP.
+Append "name" to the name of the top level virtual shared folder
+index file. This setting restricts which virtual shared folders this
+account could possibly access (and that's on top of whatever else the
+access control lists say). See the virtual shared folder documentation
+for more information.</p><p>
+For technical reasons, group names may not include comma, tab, "/" or "|"
+characters.</p></dd></dl></div></div></div><div class="refsect1"><a id="auth_login_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+
+<a class="ulink" href="auth_meta.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_enumerate.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_enumerate</span>(3)</span></a>,
+
+<a class="ulink" href="auth_passwd.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_passwd</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getoption.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getoption</span>(3)</span></a>.</p></div></div></body></html>

@@ -1,0 +1,35 @@
+From: Helmut Grohne <helmut@subdivi.de>
+Subject: consider $ac_tool_prefix for pkg-config for cross compilation
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -556,6 +556,7 @@
+ 	MYSQL_CFLAGS="-I$withval"
+ )
+ 
++PKG_CHECK_MODULES([MYSQL],[mysqlclient],[],[
+ AC_PATH_PROGS(MYSQL_CONFIG, mysql_config, mysql_config, $LPATH)
+ 
+ if test -x "$MYSQL_CONFIG"
+@@ -566,6 +567,7 @@
+ 	eval "MYSQL_CFLAGS=\"\`echo $MYSQL_CFLAGS\`\""
+ 	eval "MYSQL_LIBS=\"\`echo $MYSQL_LIBS\`\""
+ fi
++])
+ 
+ if test "$doauthmysql" = ""
+ then
+@@ -633,10 +635,11 @@
+ 	SQLITE_CFLAGS="-I$withval"
+ )
+ 
++PKG_PROG_PKG_CONFIG
+ if test "$doauthsqlite" = ""
+ then
+-	SQLITE_CFLAGS="`pkg-config --cflags sqlite3 2>/dev/null`"
+-	SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`"
++	SQLITE_CFLAGS="`$PKG_CONFIG --cflags sqlite3 2>/dev/null`"
++	SQLITE_LIBS="`$PKG_CONFIG --libs sqlite3 2>/dev/null`"
+         saveLIBS="$LIBS"
+ 	LIBS="$SQLITE_LIBS $LIBS"
+ 	AC_CHECK_FUNC(sqlite3_version,

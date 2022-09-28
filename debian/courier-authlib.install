@@ -1,0 +1,6 @@
+/usr/lib/courier-authlib/libauthcustom*.so*
+/usr/lib/courier-authlib/libauthpam*.so*
+/usr/lib/courier/courier-authlib/
+/usr/lib/libcourierauth*.so.*
+/usr/sbin/courierlogger
+/usr/share/man/man1/courierlogger.1

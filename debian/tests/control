@@ -1,0 +1,3 @@
+Tests: pam
+Restrictions: needs-root
+Depends: courier-authdaemon, bsdmainutils

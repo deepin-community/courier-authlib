@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_meta</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-meta" title="auth_meta"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-meta" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_meta — Authentication metadata</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauth.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">struct auth_meta *meta=<strong>auth_meta_init_default</strong>(</code></td><td rowspan="1" colspan="1">void<code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">void <strong>auth_meta_destroy_default</strong>(</code></td><td rowspan="1" colspan="1">struct auth_meta *<var class="pdparam">meta</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_meta_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+      The <span class="structname">auth_meta</span> structure provides additional,
+      optional metadata for
+      <span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span>,
+      <span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span>, and
+      <span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span>.
+    </p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><pre class="programlisting" xml:space="preserve">
+struct auth_meta {
+    char **envvars;
+};</pre></div></blockquote></div><p>Description of the above fields:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">envvars</span></dt><dd><p>
+	    An array of opaque
+	    <span class="quote">“<span class="quote"><em class="replaceable"><code>name</code></em>=<em class="replaceable"><code>value</code></em></span>”</span>
+	    strings, ending with a null pointer.
+	  </p></dd></dl></div><p>
+      The library recognizes the following <code class="varname">envvars</code>
+      variables:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term">TCPREMOTEIP</span></dt><dd><p>
+	    The IP address the authentication request came from.
+	  </p></dd></dl></div><div class="refsect2"><a id="auth-meta-init" shape="rect"> </a><h3>Initializing a default <span class="structname">auth_meta</span></h3><p>
+	<code class="function">auth_meta_init_default</code> creates an
+	<span class="structname">auth_meta</span> with default values.
+	A NULL pointer gets returned if the object could not be created.
+	<code class="function">auth_meta_destroy_default</code> frees the object
+	and all memory used by it, after it is no longer needed.
+      </p><p>
+	Typical usage:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+	    <code class="function">auth_meta_init_default</code> gets called to create
+	    an <span class="structname">auth_meta</span>.
+	  </p></li><li class="listitem"><p>
+	    The pointer to the new
+	    <span class="structname">auth_meta</span> gets passed to
+	    <span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span>,
+	    <span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span> or
+	    <span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span>.
+	  </p></li><li class="listitem"><p>
+	    <code class="function">auth_meta_destroy_default</code> deallocates and
+	    frees <span class="structname">auth_meta</span>'s memory.
+	  </p></li></ul></div></div><div class="refsect2"><a id="auth-meta-default" shape="rect"> </a><h3>Default <span class="structname">auth_meta</span> values</h3><p>
+	<code class="function">auth_meta_init_default</code> creates an
+	<span class="structname">auth_meta</span> with the following values:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+	    The <code class="envar">TCPREMOTEIP</code> environment variable, if set,
+	    is placed in the <code class="literal">TCPREMOTEIP</code>
+	    <code class="varname">envvars</code>
+	  </p></li></ul></div></div></div><div class="refsect1"><a id="auth_meta_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+
+<a class="ulink" href="auth_login.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a></p></div></div></body></html>

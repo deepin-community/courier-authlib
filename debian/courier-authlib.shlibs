@@ -1,0 +1,6 @@
+libauthcustom 0 courier-authlib (>= 0.71)
+libauthpam 0 courier-authlib (>= 0.71)
+libcourierauth 0 courier-authlib (>= 0.71)
+libcourierauthcommon 0 courier-authlib (>= 0.71)
+libcourierauthsasl 0 courier-authlib (>= 0.71)
+libcourierauthsaslclient 0 courier-authlib (>= 0.71)

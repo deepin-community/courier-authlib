@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>userdb</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#userdb" title="userdb"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="userdb" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>userdb — manipulate @userdb@</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">userdb</code>  {<em class="replaceable"><code>addr</code></em>}  set  {<em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em>...}</p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>  {<em class="replaceable"><code>addr</code></em>}  unset  {<em class="replaceable"><code>field</code></em>...}</p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>  {<em class="replaceable"><code>addr</code></em>}  del </p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>  {<em class="replaceable"><code>path/addr</code></em>} [ set  |   unset  |   del ]  ... </p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>   -f  {<em class="replaceable"><code>file</code></em>} {<em class="replaceable"><code>adr</code></em>} [ set  |   unset  |   del ]  ... </p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>   -show  {<em class="replaceable"><code>path</code></em>}</p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>   -show  {<em class="replaceable"><code>path</code></em>} {<em class="replaceable"><code>addr</code></em>}</p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>   -show   -f  {<em class="replaceable"><code>file</code></em>}</p></div><div class="cmdsynopsis"><p><code class="command">userdb</code>   -show   -f  {<em class="replaceable"><code>file</code></em>} {<em class="replaceable"><code>addr</code></em>}</p></div></div><div class="refsect1"><a id="userdb_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<span class="command"><strong>userdb</strong></span> is a convenient script to individually manipulate
+entries in <code class="filename">@userdb@</code>. See
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a>
+for a description of its contents.  <code class="filename">@userdb@</code> can always
+be edited using any text editor, but <span class="command"><strong>userdb</strong></span> is a
+convenient way to modify this file from another script.</p><p>
+<code class="filename">@userdb@</code> can also be a subdirectory, instead of a file.
+Specify <code class="option"><em class="replaceable"><code>foo/bar/addr</code></em></code> to manipulate
+<code class="option"><em class="replaceable"><code>addr</code></em></code> in the file
+<code class="filename">@userdb@<em class="replaceable"><code>/foo/bar</code></em></code>.  You can
+also use the
+<code class="option">-f</code> flag: <code class="option">-f
+<em class="replaceable"><code>@userdb@/foo/bar</code></em></code> is equivalent.  Use
+whatever form makes the most sense to you.</p><p>
+<code class="filename">@userdb@</code> must not have any group or world
+permissions. That's
+because its contents may include system passwords (depending upon the
+application which uses this virtual user account database).</p><p>
+Each line in <code class="filename">@userdb@</code> takes following form:</p><div class="blockquote"><blockquote class="blockquote"><code class="computeroutput">
+<em class="replaceable"><code>addr</code></em><span class="token">&lt;TAB&gt;</span><em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em>|<em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em>...
+</code></blockquote></div><p>
+<em class="replaceable"><code>addr</code></em> specifies a unique virtual address. It
+is followed by a single
+tab character, then a list of
+<em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em> pairs,
+separated by
+vertical slash characters. See
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a>
+for field definitions.</p><p>
+A text editor can be used to add blank lines or comments in
+<code class="filename">@userdb@</code>.  Any blank lines or comments are ignored by the
+<span class="command"><strong>userdb</strong></span> script.</p><p>
+The names of the actual fields, and their contents, are defined entirely by
+applications that use the <code class="filename">@userdb@</code> database, the
+<span class="command"><strong>userdb</strong></span> command just adds or removes arbitrary fields.</p><p>
+For example:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><div class="literallayout"><p><span class="command"><strong>userdb default/info set mail=/home/mail/info</strong></span></p></div></div></blockquote></div><p>
+This command accesses the address "info" in
+<code class="filename">@userdb@/default</code>.</p><p>
+If the second argument to <span class="command"><strong>userdb</strong></span> is
+"<em class="parameter"><code>set</code></em>", the
+remaining arguments are taken as
+<em class="parameter"><code><em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em></code></em> pairs, which are
+added to the record for <em class="replaceable"><code>addr</code></em>. If there is no
+record for <em class="replaceable"><code>addr</code></em>, a
+new record will be appended to the file. If
+<em class="replaceable"><code>addr</code></em> exists, any existing
+values of any specified fields are removed. If
+<em class="parameter"><code>=<em class="replaceable"><code>value</code></em></code></em> is missing,
+<span class="command"><strong>userdb</strong></span> stops and prompts for it. This is useful if
+you're setting
+a password field, where you do not want to specify the password on the command
+line, which can be seen by the
+<span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span>
+command. If <span class="command"><strong>userdb</strong></span> is being
+executed by a script, the value can be provided on standard input.</p><p>Use "<em class="parameter"><code>unset</code></em>" to delete fields from an existing
+record. Use
+"<em class="parameter"><code>del</code></em>" to delete all fields in the existing record,
+plus the record itself.</p><div class="refsect2"><a id="userdb_displaying__userdb_" shape="rect"> </a><h3>DISPLAYING <code class="filename">@userdb@</code></h3><p>
+If the first argument to userdb
+is <em class="parameter"><code>-show</code></em>, <span class="command"><strong>userdb</strong></span>
+displays the contents of <code class="filename">@userdb@</code>. If
+<code class="filename">@userdb@</code> is a
+subdirectory,
+<em class="parameter"><code><em class="replaceable"><code>path</code></em></code></em> must refer to a
+specific file in <code class="filename">@userdb@</code>. The
+<em class="parameter"><code>-f</code></em> option can be used instead of
+<em class="parameter"><code><em class="replaceable"><code>path</code></em></code></em> in order to specify an
+arbitrary file.</p><p>
+If
+<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em> is not specified,
+<span class="command"><strong>userdb</strong></span> produces a list, on standard
+output, containing all addresses found in the file, on per line. If
+<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em> is specified,
+<span class="command"><strong>userdb</strong></span> produces a list, on standard output, of
+all the fields in <code class="filename">@userdb@</code> for this
+<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em>.</p></div><div class="refsect2"><a id="userdb_international_domains" shape="rect"> </a><h3>International domains</h3><p>
+	<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em>s
+	with international domains should use UTF-8 to specify an
+	international domain name:
+      </p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><div class="literallayout"><p><span class="command"><strong><br clear="none"/>
+userdb postmaster@test.испытание set \<br clear="none"/>
+        home=/home/postmaster.test.com uid=999 gid=999</strong></span></p></div></div></blockquote></div></div><div class="refsect2"><a id="userdb_rebuilding__userdb__dat" shape="rect"> </a><h3>REBUILDING <code class="filename">@userdb@.dat</code></h3><p>
+The actual virtual account/address database is
+<code class="filename">@userdb@.dat</code>.
+This is a binary database file. <span class="command"><strong>@userdb@</strong></span> is the plain text
+version. After running <span class="command"><strong>userdb</strong></span>, execute the
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a> command to rebuild
+<code class="filename">@userdb@.dat</code> for the changes to take effect.</p></div></div><div class="refsect1"><a id="userdb_bugs" shape="rect"> </a><h2>BUGS</h2><p>
+<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em> must be unique.
+If <code class="filename">@userdb@</code> is a subdirectory,
+it's possible to create the same
+<em class="parameter"><code><em class="replaceable"><code>addr</code></em></code></em>
+in different files in the subdirectory.
+This is an error that is not currently detected by <span class="command"><strong>userdb</strong></span>,
+however the subsequent
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a> command
+will fail with an error message.</p></div><div class="refsect1"><a id="userdb_files" shape="rect"> </a><h2>FILES</h2><p>
+<code class="filename"> @userdb@</code> - plain text file, or directory of plain text files</p><p>
+<code class="filename"> .lock.filename</code> - lock file for <code class="filename">filename</code></p><p>
+<code class="filename"> .tmp.filename</code> - temporary file used to create new contents of <code class="filename">filename</code></p></div><div class="refsect1"><a id="userdb_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a>,
+
+<a class="ulink" href="userdbpw.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdbpw</span>(8)</span></a></p></div></div></body></html>

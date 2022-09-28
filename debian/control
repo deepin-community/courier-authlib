@@ -1,0 +1,113 @@
+Source: courier-authlib
+Section: mail
+Priority: optional
+Maintainer: Markus Wanner <markus@bluegap.ch>
+Standards-Version: 4.5.1
+Build-Depends: debhelper-compat (= 13),
+               default-libmysqlclient-dev,
+               expect,
+               libcourier-unicode-dev (>= 2.0),
+               libgdbm-dev | libgdbmg1-dev,
+               libidn11-dev,
+               libldap-dev,
+               libltdl3-dev,
+               libpam0g-dev,
+               libpq-dev,
+               libsasl2-dev | libsasl-dev,
+               libsqlite3-dev,
+               libtool,
+               pkg-config,
+               procps
+Homepage: https://www.courier-mta.org/
+Vcs-Git: https://salsa.debian.org/debian/courier-authlib.git
+Vcs-Browser: https://salsa.debian.org/debian/courier-authlib
+
+Package: courier-authlib
+Architecture: any
+Depends: adduser,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Recommends: expect
+Description: Courier authentication library
+ The Courier authentication library provides authentication services
+ for other Courier applications.
+
+Package: courier-authdaemon
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         lsb-base (>= 3.0-10),
+         sysvinit-utils (>= 2.88dsf-50) | init-d-script,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Replaces: courier-authlib (<< 0.71.1-2~)
+Breaks: courier-authlib (<< 0.71.1-2~)
+Description: Courier authentication daemon
+ This package contains the authentication daemon for the Courier
+ applications.
+
+Package: courier-authlib-dev
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Development libraries for the Courier authentication library
+ This package contains the development libraries and files needed to
+ compile Courier packages that use the Courier authentication library.
+
+Package: courier-authlib-userdb
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: userdb support for the Courier authentication library
+ This package contains the userdb support for the Courier
+ authentication library. Userdb is a simple way to manage virtual mail
+ accounts using a GDBM-based database file.
+
+Package: courier-authlib-mysql
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: MySQL support for the Courier authentication library
+ This package contains the MySQL support for the Courier
+ authentication library.
+
+Package: courier-authlib-postgresql
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: PostgreSQL support for the Courier authentication library
+ This package contains the PostgreSQL support for the Courier
+ authentication library.
+
+Package: courier-authlib-ldap
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: LDAP support for the Courier authentication library
+ This package contains the LDAP support for the Courier authentication
+ library.
+
+Package: courier-authlib-sqlite
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: SQLite 3 support for the Courier authentication library
+ This package contains the SQLite 3 support for the Courier
+ authentication library.
+
+Package: courier-authlib-pipe
+Architecture: any
+Depends: courier-authlib (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: External authentication support for the Courier authentication library
+ This package contains external authentication support via pipes for
+ the Courier authentication library. The authpipe module is a generic
+ plugin that enables authentication requests to be serviced by an
+ external program, then communicates through messages on stdin and
+ stdout.

@@ -1,0 +1,63 @@
+'\" t
+.\"  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: authtest
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "AUTHTEST" "1" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+authtest \- Test the Courier Authentication Library
+.SH "SYNOPSIS"
+.HP \w'\fBauthtest\fR\ 'u
+\fBauthtest\fR {loginid} [password] [newpassword]
+.SH "DESCRIPTION"
+.PP
+\fBauthtest\fR
+is a command\-line diagnostic utility for the Courier Authentication Library\&.
+\fBauthtest\fR
+requires at least one argument:
+\fIloginid\fR\&.
+\fBauthtest\fR
+sends the authentication request to the Courier Authentication Library, then displays the results\&. Only root may use
+\fBauthtest\fR
+utility, and the Courier Authentication Library daemon (\fBauthdaemond\fR) must already be started\&.
+.PP
+If only one argument is provided, the authentication request displays the account information for
+\fIloginid\fR, if found\&.
+.PP
+If two arguments are provided,
+\fIpassword\fR
+must match
+\fIloginid\fR\*(Aqs existing password\&.
+.PP
+If three arguments are provided,
+\fIloginid\fR\*(Aqs password is changed to
+\fInewpassword\fR, but only if
+\fIpassword\fR
+matches the existing password\&.
+.PP
+These three basic authentication requests can be used to troubleshoot the authentication library\*(Aqs configuration\&.

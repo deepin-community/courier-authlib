@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>makeuserdb</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#makeuserdb" title="makeuserdb"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="makeuserdb" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>makeuserdb — create @userdb@</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">makeuserdb</code>  [-f <em class="replaceable"><code>filename</code></em>]</p></div><div class="cmdsynopsis"><p><code class="command">pw2userdb</code> </p></div><div class="cmdsynopsis"><p><code class="command">vchkpw2userdb</code>  [--vpopmailhome=<em class="replaceable"><code>dir</code></em>] [--todir=<em class="replaceable"><code>dir</code></em>]</p></div></div><div class="refsect1"><a id="makeuserdb_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<span class="command"><strong>makeuserdb</strong></span> creates <code class="filename">@userdb@.dat</code> from
+the contents of <code class="filename">@userdb@</code>.
+<code class="filename">@userdb@</code>'s contents are described later in this document.
+<span class="application">Maildrop</span>,
+<span class="application">Courier</span>, and other applications use
+<code class="filename">@userdb@.dat</code> as a
+substitute/complement for your system password file.
+The usual purpose for
+<code class="filename">@userdb@.dat</code> is to specify "virtual" accounts - accounts
+that do
+not have an associated system login.
+Usually (but not necessarily) all virtual accounts share the same
+system userid.
+<code class="filename">@userdb@.dat</code> may also replace
+your system password file. Because the system password file is a text file,
+when there's a large number of accounts it will be significantly faster to
+search
+<code class="filename">@userdb.dat@</code>, which is a binary database,
+instead of a flat text file that the system password file usually is.</p><p>
+The <span class="command"><strong>makeuserdb</strong></span> command can be safely executed during
+normal system activity.</p><p>
+The <code class="option">-f</code> option creates
+<code class="filename"><em class="replaceable"><code>filename</code></em>.dat</code> from
+<code class="filename"><em class="replaceable"><code>filename</code></em></code>, instead of the
+default <code class="filename">@userdb@.dat</code> from
+<code class="filename">@userdb@</code>.</p><div class="refsect2"><a id="makeuserdb_format_of__userdb_" shape="rect"> </a><h3>Format of <code class="filename">@userdb@</code></h3><p>
+<code class="filename">@userdb@</code> is a plain text file that can be created using
+any text editor. Blank lines are ignored. Lines that start with the #
+character are comments, and are also ignored.
+Other lines define properties of a single
+"account", one line per account.
+<code class="filename">@userdb@</code> may be a directory instead of a plain file.
+In that case all files in <code class="filename">@userdb@</code> are essentially
+concatenated, and are treated as a single file.
+Each line takes the following format:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><div class="literallayout"><p><em class="replaceable"><code>name</code></em><span class="token">&lt;TAB&gt;</span><em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em>|<em class="replaceable"><code>field</code></em>=<em class="replaceable"><code>value</code></em>...</p></div></div></blockquote></div><p><em class="replaceable"><code>name</code></em> is the account name.
+<em class="replaceable"><code>name</code></em> MUST contain only lowercase characters
+If <span class="application">Courier</span> is
+configured to treat lowercase and uppercase account names as
+identical, <em class="replaceable"><code>name</code></em> is followed by exactly one tab
+character, then a list of field/value pairs separated by vertical slashes.
+<em class="replaceable"><code>field</code></em> is the name of the field,
+<em class="replaceable"><code>value</code></em> is the field value.
+Fields and values themself cannot contain slashes or control characters.
+Fields may be
+specified in any order. Here are all the currently defined fields.  Note that
+not every field is used by every application that reads
+<code class="filename">@userdb@.dat</code>.</p><div class="blockquote"><blockquote class="blockquote"><p>
+<em class="parameter"><code>uid</code></em> - <em class="replaceable"><code>value</code></em> is a (possibly)
+unique numerical user ID for this account.</p><p>
+<em class="parameter"><code>gid</code></em> - <em class="replaceable"><code>value</code></em> is a (possibly)
+unique numerical group ID for this account.</p><p>
+<em class="parameter"><code>home</code></em> - <em class="replaceable"><code>value</code></em> is the account's home
+directory.</p><p>
+<em class="parameter"><code>shell</code></em> - <em class="replaceable"><code>value</code></em> is the account's default
+login shell.</p><p>
+<em class="parameter"><code>systempw</code></em> - <em class="replaceable"><code>value</code></em> is the account's
+password. See
+<a class="ulink" href="userdbpw.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdbpw</span>(8)</span></a>
+for details on how to set up this field.</p><p>
+<em class="parameter"><code>pop3pw, esmtppw, imappw...</code></em> - <em class="replaceable"><code>value</code></em>
+specifies a separate password used only for authenticating access using a
+specific service, such as POP3, IMAP, or anything else. If not defined,
+<em class="parameter"><code>systempw</code></em> is always used. This allows access to an account to be
+restricted only to certain services, such as POP3, even if other services
+are also enabled on the server.</p><p>
+<em class="parameter"><code>mail</code></em> - <em class="replaceable"><code>value</code></em> specifies the location of
+the account's Maildir mailbox. This is an optional field that is normally
+used when <span class="command"><strong>userdb</strong></span> is used to provide aliases for other
+mail accounts.  For example, one particular multi-domain E-mail
+service configuration
+that's used by both <span class="application">Qmail</span> and
+<span class="application">Courier</span> servers is to deliver mail for a
+mailbox in a virtual domain, such as "user@example.com", to a local mailbox
+called "example-user".  Instead of requiring the E-mail account
+holder to log in as
+"example-user" to download mail from this account, a <span class="command"><strong>userdb</strong></span>
+entry for "user@example.com" is set up with <em class="parameter"><code>mail</code></em> set to the
+location of example-user's Maildir mailbox, thus hiding the internal
+mail configuration from the E-mail account holder's view.</p><p>
+<em class="parameter"><code>quota</code></em> - <em class="replaceable"><code>value</code></em> specifies the
+maildir quota for the account's Maildir.
+This has nothing to do with actual filesystem quotas.
+<span class="application">Courier</span> has a
+software-based Maildir quota enforcement
+mechanism which requires additional setup and configuration.
+See
+<a class="ulink" href="maildirquota.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">maildirquota</span>(7)</span></a>
+for additional information.</p></blockquote></div></div><div class="refsect2"><a id="makeuserdb__userdb_shadow_dat" shape="rect"> </a><h3><code class="filename">@userdb@shadow.dat</code></h3><p>
+All fields whose name ends with 'pw' will NOT copied to
+<code class="filename">@userdb@.dat</code>. These fields will be copied to
+<code class="filename">@userdb@shadow.dat</code>.
+<span class="command"><strong>makeuserdb</strong></span> creates <code class="filename">@userdb@shadow.dat</code>
+without any group and world permissions.
+Note that <span class="command"><strong>makeuserdb</strong></span> reports an error
+if <span class="command"><strong>@userdb@</strong></span> has any group
+or world permissions.</p></div><div class="refsect2"><a id="makeuserdb_converting__etc_passwd_and_vpopmail_to__userdb__format" shape="rect"> </a><h3>CONVERTING <code class="filename">/etc/passwd</code> and vpopmail to <code class="filename">@userdb@</code> format</h3><p>
+<span class="command"><strong>pw2userdb</strong></span> reads the <code class="filename">/etc/passwd</code> and
+<code class="filename">/etc/shadow</code> files and converts all entries to the
+<code class="filename">@userdb@</code> format,
+printing the result on standard output.
+The output of <span class="command"><strong>pw2userdb</strong></span>
+can be saved as <span class="command"><strong>@userdb@</strong></span> (or as some file in this
+subdirectory).
+Linear searches of <code class="filename">/etc/passwd</code> can
+be very slow when you have
+tens of thousands of accounts.
+Programs like <span class="command"><strong>maildrop</strong></span> always look in
+<code class="filename">@userdb@</code> first.
+By saving the system password file in
+<code class="filename">@userdb@</code> it is possible to significantly reduce the
+amount of
+time it takes to look up this information.</p><p>
+After saving the output of <span class="command"><strong>pw2userdb</strong></span>, you must still run
+<span class="command"><strong>makeuserdb</strong></span> to create
+<code class="filename">@userdb@.dat</code>.</p><p>
+<span class="command"><strong>vchkpw2userdb</strong></span> converts a vpopmail-style
+directory hierarchy to the <code class="filename">@userdb@</code> format.
+This is an external virtual domain management package that's often used
+with <span class="application">Qmail</span> servers.</p><p>
+Generally, an account named 'vpopmail' is reserved for this purpose.
+In
+that account the file <code class="filename">users/vpasswd</code> has the same
+layout as
+<code class="filename">/etc/passwd</code>, and performs a similar function, except
+that all userid in <code class="filename">users/vpasswd</code> have the same userid.
+Additionally, the
+<code class="filename">domains</code> subdirectory stores virtual accounts for
+multiple domains.  For example,
+<code class="filename">domains/example.com/vpasswd</code>
+has the passwd file for the domain <em class="parameter"><code>example.com</code></em>.
+Some systems also have a soft link, <em class="parameter"><code>domains/default</code></em>,
+that points to a domain that's considered a "default" domain.</p><p>
+The <span class="command"><strong>vchkpw2userdb</strong></span> reads all this information, and tries to
+convert it into the <code class="filename">@userdb@</code> format.  The
+<em class="parameter"><code>--vpopmailhost</code></em> option specifies the top level
+directory, if it is
+not the home directory of the vpopmail account.</p><p>
+The <span class="command"><strong>vchkpw2userdb</strong></span> script prints the results on standard
+output. If specified, the <em class="parameter"><code>--todir</code></em> option
+tries to convert all
+<code class="filename">vpasswd</code> files one at a time, saving each one
+individually in <em class="replaceable"><code>dir</code></em>. For example:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><div class="literallayout"><p><br clear="none"/>
+mkdir @userdb@<br clear="none"/>
+vchkpw2userdb --todir=@userdb@/vpopmail<br clear="none"/>
+makeuserdb<br clear="none"/>
+</p></div></div></blockquote></div><p>
+It is still necessary to run <span class="command"><strong>makeuserdb</strong></span>, of course, to
+create the binary database file <code class="filename">@userdb@.dat</code></p><p>
+NOTE:  You are still required to create the <span class="command"><strong>@userdb@</strong></span> entry
+which maps
+system userids back to accounts,
+"<em class="replaceable"><code>uid</code></em>=<span class="token">&lt;TAB&gt;</span><em class="replaceable"><code>name</code></em>",
+if that's applicable. <span class="command"><strong>vchkpw2userdb</strong></span> will not do it for
+you.</p><p>
+NOTE:  <span class="command"><strong>makeuserdb</strong></span> may complain about duplicate entries, if
+your "default" entries in <code class="filename">users/vpasswd</code> or
+<code class="filename">domains/default/vpasswd</code> are the same as anything in any
+other <code class="filename">@userdb@</code> file.  It is also likely that you'll end
+up with duplicate, but distinct, entries for every account in the default
+domain.  For
+example, if your default domain is example.com, you'll end up with duplicate
+entries - you'll have entries for both <em class="parameter"><code>user</code></em> and
+<em class="parameter"><code>user@example.com</code></em>.</p><p>If you intend to maintain the master set of accounts using
+vchkpw/vpopmail,
+in order to avoid cleaning this up every time, you might want to consider
+doing the following: run <span class="command"><strong>vchkpw2userdb</strong></span> once, using the
+<em class="parameter"><code>--todir</code></em> option.
+Then, go into the resulting directory, and
+replace one of the redundant files with a soft link to
+<code class="filename">/dev/null</code>.
+This allows you to run
+<span class="command"><strong>vchkpw2userdb</strong></span> without having to go in and
+cleaning up again, afterwards.</p></div></div><div class="refsect1"><a id="makeuserdb_files" shape="rect"> </a><h2>FILES</h2><div class="literallayout"><p><br clear="none"/>
+<code class="filename">@userdb@</code><br clear="none"/>
+<code class="filename">@userdb@.dat</code><br clear="none"/>
+<code class="filename">@userdb@shadow.dat</code><br clear="none"/>
+<code class="filename">@tmpdir@/userdb.tmp</code> - temporary file<br clear="none"/>
+<code class="filename">@tmpdir@/userdbshadow.tmp</code> - temporary file<br clear="none"/>
+</p></div></div><div class="refsect1"><a id="makeuserdb_bugs" shape="rect"> </a><h2>BUGS</h2><p><span class="command"><strong>makeuserdb</strong></span> is a Perl script, and uses Perl's portable
+locking.
+Perl's documentation notes that certain combinations of locking options may
+not work with some networks.</p></div><div class="refsect1"><a id="makeuserdb_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a>,
+<a class="ulink" href="maildrop.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">maildrop</span>(8)</span></a>,
+<a class="ulink" href="courier.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">courier</span>(8)</span></a>,
+<a class="ulink" href="maildirquota.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">maildirquota</span>(7)</span></a>.
+</p></div></div></body></html>

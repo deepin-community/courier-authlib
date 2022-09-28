@@ -1,0 +1,18 @@
+                         Courier Authentication Library
+
+   A new SQLite authentication module has been added to the Courier
+   Authentication Library. It's considered to be in experimental or testing
+   status.
+
+Debugging
+
+   To generate additional debugging messages, edit the authdaemond startup
+   script (installed in /usr/local/bin by default), and add the following to
+   the script:
+
+ DEBUG_LOGIN=2
+ export DEBUG_LOGIN
+
+   Debugging messages from the authentication daemon processes will be sent
+   to the syslog facility, and recorded in whatever log file syslog is
+   configured to use (usually /var/log/messages or /var/log/maillog).

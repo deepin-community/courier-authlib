@@ -1,0 +1,14 @@
+Description: include a missing header file
+Author: Markus Wanner <markus@bluegap.ch>
+Last-Update: 2017-07-02
+
+--- a/libs/rfc822/rfc2047.c
++++ b/libs/rfc822/rfc2047.c
+@@ -8,6 +8,7 @@
+ #include	<ctype.h>
+ #include	<string.h>
+ #include	<stdlib.h>
++#include	<uchar.h>
+ #include	<errno.h>
+ #include	<courier-unicode.h>
+ 

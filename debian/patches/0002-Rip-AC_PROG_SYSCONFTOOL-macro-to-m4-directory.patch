@@ -1,0 +1,73 @@
+From: =?utf-8?q?Ond=C5=99ej_Sur=C3=BD?= <ondrej@sury.org>
+Date: Mon, 8 Feb 2016 15:09:24 +0100
+Subject: Rip AC_PROG_SYSCONFTOOL macro to m4/ directory
+
+---
+ Makefile.am       |  2 ++
+ configure.ac      |  2 ++
+ m4/sysconftool.m4 | 37 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
+ create mode 100644 m4/sysconftool.m4
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -2,6 +2,8 @@
+ # Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
+ # distribution information.
+ 
++ACLOCAL_AMFLAGS = -I m4
++
+ AUTOMAKE_OPTIONS=dist-bzip2
+ 
+ SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog
+--- a/configure.ac
++++ b/configure.ac
+@@ -9,6 +9,8 @@
+ 
+ AC_CONFIG_SRCDIR([courierauth.h])
+ 
++AC_CONFIG_MACRO_DIR([m4])
++
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_HEADERS([courier_auth_config.h])
+ >confdefs.h  # Kill PACKAGE_ macros
+--- /dev/null
++++ b/m4/sysconftool.m4
+@@ -0,0 +1,37 @@
++# Configure sysconftool
++# Copyright 2000-2005 Double Precision, Inc.  See COPYING for
++# distribution information.
++#
++# AC_PROG_SYSCONFTOOL
++
++AC_DEFUN([AC_PROG_SYSCONFTOOL],
++[
++
++	AC_PATH_PROGS(SYSCONFTOOL_PERL, perl5 perl, perl)
++
++	if test "$SYSCONFTOOL_PERL" = "perl"
++	then
++		AC_ERROR(perl not found - please install perl)
++	fi
++
++	AC_MSG_CHECKING(for sysconftool...)
++	SYSCONFTOOL=""
++	for sysconf_dir in $ac_aux_dir . .. ../..
++	do
++		if test -f $srcdir/$sysconf_dir/sysconftool
++		then
++			SYSCONFTOOL=$srcdir/$sysconf_dir/sysconftool
++			break
++		fi
++	done
++
++	if test "$SYSCONFTOOL" = ""
++	then
++		AC_ERROR(sysconftool missing - not in the package)
++	fi
++
++	AC_MSG_RESULT( $SYSCONFTOOL)
++	SYSCONFTOOL="$SYSCONFTOOL_PERL $SYSCONFTOOL"
++	AC_SUBST(SYSCONFTOOL)
++]
++)

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+add_override() {
+    if ! dpkg-statoverride --list $4 >/dev/null; then
+	dpkg-statoverride --update --add $1 $2 $3 $4
+    fi
+}
+
+if [ "$1" = "configure" ]; then
+    add_override root courier 0640 /etc/courier/authpgsqlrc
+fi
+
+#DEBHELPER#
+
+exit 0

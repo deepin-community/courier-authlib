@@ -1,0 +1,549 @@
+courier-authlib (0.71.1-2) unstable; urgency=medium
+
+  * Tighten permissions on /run/courier/authdaemon.  Closes: #984810.
+  * Correct init script to be idempotent.  Closes: #984818.
+  * Move binaries autpasswd, authtest, and authenumerate from
+    courier-authlib to courier-authdaemon.  They require the
+    daemon to run and are useless without it.
+
+ -- Markus Wanner <markus@bluegap.ch>  Mon, 08 Mar 2021 23:11:08 +0100
+
+courier-authlib (0.71.1-1) unstable; urgency=medium
+
+  * Minor upstream update 0.71.1.
+  * Fix FTCBFS by extending patch 0009.  Closes: #929979.
+  * Bump Standards-Version to 4.5.1: no changes required.
+  * Bump compat version: replace d/compat with debhelper-compat, use
+    dh_missing for --fail-missing, use d/not-installed.
+  * Drop unnecessary B-D on dh-autoreconf and pkg-kde-tools, drop the
+    corresponding flags in d/rules.  autoreconf is no longer necessary
+    and the symbolshelper no longer used.
+  * Adjust postrm scripts to avoid a deprecation warning on the
+    --force argument of dpkg-statoverride.
+  * Rename to d/courier-authdaemon.tmpfiles to avoid a deprecation
+    warning.
+
+ -- Markus Wanner <markus@bluegap.ch>  Tue, 16 Feb 2021 21:57:47 +0100
+
+courier-authlib (0.71.0-1) unstable; urgency=medium
+
+  * New upstream release 0.71.0.
+  * Refresh patches 0001, 0002 and 0009.
+  * Update patch 0005, of which some has been adapted upstream.
+  * Drop symbols file, replace with plain shlibs approach.
+
+ -- Markus Wanner <markus@bluegap.ch>  Sat, 26 Dec 2020 22:53:37 +0100
+
+courier-authlib (0.69.0-2) unstable; urgency=medium
+
+  [ Andreas Henriksson ]
+  * Pass PS=/bin/ps to configure
+    - fixes redproducible build on merged-usr vs non-merged
+    Closes: #915226.
+
+  [ Markus Wanner ]
+  * Correct CI test pam, drop postgres-simple and postgres-complex
+    for now.
+  * Update symbols file to cover even more optional symbols.
+  * Bump Standards-Version to 4.3.0: no changes required.
+
+ -- Markus Wanner <markus@bluegap.ch>  Sat, 02 Feb 2019 23:17:27 +0100
+
+courier-authlib (0.69.0-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/copyright: Use https protocol in Format field
+  * d/changelog: Remove trailing whitespaces
+  * d/watch: Use https protocol
+
+  [ Helmut Grohne ]
+  * Fix FTCBFS: (Closes: #884630)
+    + Do not try to guess the mail user/group from the build system.
+    + Use fcntl locking.
+    + Add 0009-cross.patch: Consider $ac_tool_prefix for pkg-config.
+
+  [ Markus Wanner ]
+  * New upstream release.
+  * Bump d/compat to 11.
+  * Add patch 0008-fix-perl-shebang.patch to fix perl shebang.
+  * Refresh patch 0001-Don-t-mangle-permissions....patch
+  * Drop patches 0003 and 0004, they have been integrated upstream.
+  * Increase verbosity in d/rules.
+  * Drop postinst call of invoke-rc.d and rely on debhelper, instead.
+  * Bump Standards-Version to 4.2.1: no further changes required.
+
+ -- Markus Wanner <markus@bluegap.ch>  Tue, 16 Oct 2018 18:43:27 +0200
+
+courier-authlib (0.68.0-4.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Relax checks for C++ symbols (Closes: #897725)
+  * Update Vcs-* fields in debian/control
+
+ -- Dmitry Bogatov <KAction@gnu.org>  Wed, 10 Oct 2018 16:35:27 +0000
+
+courier-authlib (0.68.0-4) unstable; urgency=medium
+
+  [ Matthias Klose ]
+  * Update symbols file for -O3 builds. Closes: #875276.
+
+  [ Markus Wanner ]
+  * Correct build dependencies: require version 2.0 or newer of
+    courier-unicode, as per aclocal.m4.
+  * Use CONFIG_SHELL rather than just SHELL to enhance
+    reproducibility.
+
+ -- Markus Wanner <markus@bluegap.ch>  Mon, 11 Sep 2017 23:06:17 +0200
+
+courier-authlib (0.68.0-3) unstable; urgency=medium
+
+  * A few symbols from libcourierauthcommon.so.0 do not follow any
+    pattern. Mark them as optional. Closes: #868739.
+
+ -- Markus Wanner <markus@bluegap.ch>  Tue, 18 Jul 2017 17:14:27 +0200
+
+courier-authlib (0.68.0-2) unstable; urgency=medium
+
+  * Correct symbols file for 32-bit architectures. Closes: #866975.
+  * Tweak autopkgtests to work better.
+
+ -- Markus Wanner <markus@bluegap.ch>  Mon, 17 Jul 2017 22:36:26 +0200
+
+courier-authlib (0.68.0-1) unstable; urgency=medium
+
+  * New upstream release 0.68.0, upload to unstable.
+  * Drop patch 0006-Correct-CXXFLAGS.patch, it got applied upstream.
+  * Add three autopkgtests: pam, postgres-simple, postgres-custom.
+  * Add patch 0007-add-missing-include.patch so the rfc822 component
+    compiles again.
+
+ -- Markus Wanner <markus@bluegap.ch>  Sun, 02 Jul 2017 17:05:15 +0200
+
+courier-authlib (0.67.0-1) experimental; urgency=medium
+
+  * New upstream release 0.67.0.
+  * Take over the package. Closes: #848981.
+  * Update d/watch to ignore development snapshots.
+  * Bump S-V to 3.9.8, no changes required.
+  * Update d/copyright: adjust years, add myself, correct moved files.
+  * Refresh patches: 0001 and 0003.
+  * Adapt patch 0003-Fix-authdaemondprog-linking-missing-
+    libcourierauth.patch to apply, again.
+  * Add patch 0006-Correct-CXXFLAGS.patch.
+  * Update symbols: according to upstream, vanishing symbols are all
+    used for internal APIs only and shoul not affect library users.
+  * d/control: Use https for Vcs-* and Homepage fields.
+  * d/control: drop the deprecated or-ed dependency on libmysqlclient-dev.
+  * Use mailuser and mailgroup arguments for configure (as courier-base
+    with courier-config is not available at build time).
+  * Drop autotools-dev, use only dh_autoreconf.
+  * Enable basic hardening features, doesn't quite cover all libs, yet.
+  * Add a separate `set -e` line in postrm and postinst scripts, fixes
+    a lintian warning.
+  * Hard-wire $SHELL to /bin/sh in the hope for more reproducible builds.
+  * Drop now obsolete lintian overrides.
+
+ -- Markus Wanner <markus@bluegap.ch>  Sun, 09 Apr 2017 20:54:30 +0200
+
+courier-authlib (0.66.4-9) unstable; urgency=medium
+
+  * Orphan the package.
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 21 Dec 2016 15:02:10 +0100
+
+courier-authlib (0.66.4-8) unstable; urgency=medium
+
+  * Use default-libmysqlclient-dev instead of libmysqlclient-dev
+  * Run wrap-and-sort -a
+  * Rebuild with default-libmysqlclient-dev as libmysqlclient-dev (>= 5.7)
+    is broken (Closes: #844952)
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 25 Nov 2016 15:21:19 +0100
+
+courier-authlib (0.66.4-7) unstable; urgency=medium
+
+  * /usr/sbin/authdaemon is just a shell wrapper we need to call with
+    'start' and 'stop' arguments (Closes: #818747)
+  * Look at /usr/lib/courier/courier-authlib/authdaemond for
+    courier-authdaemon init.d script status call
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 23 Mar 2016 14:38:43 +0100
+
+courier-authlib (0.66.4-6) unstable; urgency=medium
+
+  * Fix the TMPFILES loop in init script (Closes: #818744)
+  * Add "start" as default DAEMON_ARGS to launch courier-authdaemon
+    (Closes: #818747)
+  * Fix courier-authlib-sqlite description (Closes: #810601)
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 22 Mar 2016 12:11:51 +0100
+
+courier-authlib (0.66.4-5) unstable; urgency=medium
+
+  * sysvinit-utils | init-d-script is Dependency and not Build-Dependency
+  * Looks like trigger name cannot end with /
+  * Let's restart courier-authdaemon and not authdaemon in triggered action
+    (Closes: #810345)
+  * libcourierauth* libraries are normal shared libraries, treat them as such
+    (Closes: #378241)
+  * Fix misc lintian warnings
+  * Add versioned Breaks: for courier-base and maildrop to not break them
+  * Rewritten init.d script using init-d-script
+    (Closes: #776529, #144505, #580187, #750582)
+  * Remove authdaemon restart from prerm scripts, we don't need this
+    anymore since we restart authdaemon via dpkg-trigger (Closes: #540374)
+  * Rewritten d/rules to use debhelper 9, autoreconf, and autotools-dev
+    (Closes: #558542, #540698, #599628, #607123, #744560)
+  * Update symbols file to match current symbols and set
+    DPKG_GENSYMBOLS_CHECK_LEVEL to 4
+  * Add adduser to courier-authlib Depends
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 16 Mar 2016 11:41:54 +0100
+
+courier-authlib (0.66.4-4) unstable; urgency=medium
+
+  * Update packaging to modern dh9 format and use dh-autoreconf and
+    autotools-dev
+  * Don't mangle file permissions on install time as it's take care of in
+    Debian package
+  * Rip AC_PROG_SYSCONFTOOL macro to m4/ directory
+  * Fix authdaemondprog linking; missing libcourierauth.la
+  * Reorder libs on pkglib_LTLIBRARIES to help libtool find the libs
+  * Lintian overrides are installed by dh_lintian
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 08 Feb 2016 15:00:41 +0100
+
+courier-authlib (0.66.4-3) unstable; urgency=medium
+
+  * Check and create courier user in authdaemon package in case
+    courier-base is not installed first (LP#1542174)
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 05 Feb 2016 09:58:26 +0100
+
+courier-authlib (0.66.4-2) unstable; urgency=medium
+
+  * Convert the d/copyright into machine-readable file and add license for
+    authldaplib.c
+  * Use invoke-rc.d to restart authdaemon on mysql and postgresql fresh
+    installation
+  * Add courier-authdaemon systemd files (service and tmpfile)
+
+ -- Ondřej Surý <ondrej@debian.org>  Sat, 02 Jan 2016 17:29:17 +0100
+
+courier-authlib (0.66.4-1) unstable; urgency=medium
+
+  * Imported Upstream version 0.66.4
+  * Add dependency on libcourier-unicode-dev and wrap-and-sort -a
+  * Add myself to Uploaders
+  * Add Vcs-* links and Homepage
+  * Add d/watch with support for signed packages
+
+ -- Ondřej Surý <ondrej@debian.org>  Thu, 31 Dec 2015 11:33:25 +0100
+
+courier-authlib (0.66.3-1) unstable; urgency=medium
+
+  * Add support for authsqlite
+  * New upstream version 0.66.3
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 29 Jun 2015 12:23:12 +0200
+
+courier-authlib (0.66.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+  [Willi Mann <willi@debian.org>]
+
+  * Fix libtool breakage by explicitly using /bin/bash in debian/rules.
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 28 Oct 2013 11:38:37 +0100
+
+courier-authlib (0.63.0-6) unstable; urgency=low
+
+  [Martin Orr <martin@martinorr.name>]
+
+  * Set SELinux context for runtime directories in init script
+    (Closes: #668564)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri, 13 Apr 2012 08:53:02 +0200
+
+courier-authlib (0.63.0-5) unstable; urgency=low
+
+  [ Moritz Muehlenhoff <jmm@debian.org> ]
+
+  * Enable hardened build flags (Closes: #655168)
+
+  [ Peter Eisentraut <petere@debian.org> ]
+
+  * Add support for "status" action to authdaemon init script
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Sat, 07 Apr 2012 16:48:52 +0200
+
+courier-authlib (0.63.0-4) unstable; urgency=low
+
+  * Remove umask check from debian/rules (Closes: #634599, thanks to Lucas
+    Nussbaum <lucas@lucas-nussbaum.net> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Wed, 31 Aug 2011 13:32:46 +0200
+
+courier-authlib (0.63.0-3.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Empty dependency_libs (Closes: #621191).
+
+ -- Luk Claes <luk@debian.org>  Tue, 28 Jun 2011 07:23:00 +0200
+
+courier-authlib (0.63.0-3) unstable; urgency=low
+
+  [ Simon McVittie <smcv@debian.org> ]
+  * Add a symbols file for libcourier*.so to work around the library name
+    being unsuitable for dpkg-shlibdeps (based on a suggestion from
+    Steve Langasek, Closes: #554788)
+  * Tell dh_makeshlibs and dh_shlibdeps to look in the non-standard library
+    directory
+  * Make distclean rather than clean to avoid garbage in the Debian diff when
+    building twice (patch from Peter Eisentraut, Closes: #527971)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 11 Oct 2010 10:20:03 +0200
+
+courier-authlib (0.63.0-2) unstable; urgency=low
+
+  * rebuild to really fix MySQL dependency (Closes: #574101)
+  * recreation of directories in /var/run uses correct
+    ownership/permissions now (Closes: #429866)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri, 19 Mar 2010 14:28:14 +0100
+
+courier-authlib (0.63.0-1) unstable; urgency=low
+
+  * new upstream release
+  * fix deprecated dependency on libmysqlclient15off (Closes: #574101,
+    thanks to Dominik Röttsches <d-r@roettsches.de> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 16 Mar 2010 16:14:44 +0100
+
+courier-authlib (0.62.4-1) unstable; urgency=low
+
+  * new upstream release
+    - satisfies courier-base reverse dependency (Closes: #558120,
+      thanks to Julien Pinon <jpinon@free.fr> for the report)
+  * fix incorrect handling of init.d reload action by removing it
+    (Closes: #527972, thanks to Peter Eisentraut <petere@debian.org>)
+  * use upstream config.* files
+  * lintian fixes
+    - added ${misc:Depends} for all packages
+    - eliminated commands with absolute paths in maintainer scripts
+    - bumped up Standards-Version
+    - bumped up debhelper comptability level to 5
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Thu, 26 Nov 2009 20:09:13 +0100
+
+courier-authlib (0.62.2-1) unstable; urgency=low
+
+  * new upstream release
+  * create run directory with init script (Closes: #349830, thanks to Tim
+    Small <tim@buttersideup.com> for the help)
+  * lintian
+    - copyright notice added to copyright
+    - overrides for file permission of configuration files
+    - reorder debhelper commands
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 02 Mar 2009 16:09:05 +0100
+
+courier-authlib (0.61.0-1+lenny1) testing-security; urgency=high
+
+  * Non-maintainer upload by the security team
+  * Fix several sql-injection vulnerabilities in authpgsqllib.c by using
+    PQsetClientEncoding() and PQescapeStringConn()
+    Fixes: CVE-2008-2380
+
+ -- Steffen Joeris <white@debian.org>  Mon, 08 Dec 2008 13:48:12 +0000
+
+courier-authlib (0.61.0-1) unstable; urgency=low
+
+  * new upstream release
+  * lintian:
+    - debian/compat file
+    - don't ignore make clean errors
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Thu, 17 Jul 2008 12:59:36 +0200
+
+courier-authlib (0.60.1-2.1) unstable; urgency=high
+
+  * Non-maintainer upload by the security team
+  * Fix sql injection vulnerability by changing to use
+    mysql_set_character_set instead of SET NAMES
+    (Change was introduced by upstream in 0.60.6)
+    (Closes: #485424)
+
+ -- Steffen Joeris <white@debian.org>  Mon, 09 Jun 2008 15:29:23 +0000
+
+courier-authlib (0.60.1-2) unstable; urgency=low
+
+  * added LSB dependency info to init scripts (Closes: #460221, thanks to
+    Petter Reinholdtsen <pere@hungry.com> for the patch)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon,  7 Apr 2008 13:21:37 +0200
+
+courier-authlib (0.60.1-1) unstable; urgency=low
+
+  * new upstream release
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 15 Oct 2007 10:56:16 +0200
+
+courier-authlib (0.60.0-1) unstable; urgency=low
+
+  * new upstream release, now under GPL version 3
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Sun, 30 Sep 2007 21:58:35 +0200
+
+courier-authlib (0.59.3-2) unstable; urgency=low
+
+  * dropped alternative build dependency on postgresql-dev
+    (Closes: #429964, thanks to Lior Kaplan <kaplan@debian.org> for the report
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Thu, 21 Jun 2007 20:26:38 +0200
+
+courier-authlib (0.59.3-1) unstable; urgency=low
+
+  * new upstream release
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 23 Apr 2007 10:18:17 +0200
+
+courier-authlib (0.59.1-0.1) experimental; urgency=low
+
+  * new upstream release
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Wed, 17 Jan 2007 11:58:29 +0100
+
+courier-authlib (0.58-5) unstable; urgency=low
+
+  * added dependency and build dependency on expect (Closes: #400812,
+    thanks to Peter Troeger <peter@troeger.eu> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Wed, 29 Nov 2006 11:42:45 +0100
+
+courier-authlib (0.58-4) unstable; urgency=medium
+
+  * call dh_makeshlibs during binary-arch target in order to get proper shlib
+    information for libcourierauth.so (Closes: #378249, thanks to Charles
+    Fry <cfry@debian.org> for the report and Steinar H. Gunderson
+    <sesse@debian.org> for the patch)
+  * ensure that courier-authdaemon is upgraded when switching to courier-authlib
+  * switch to lsb logging functions (Closes: #384823, thanks to David Härdeman
+    <david@2gen.com> for the patch)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Sat,  9 Sep 2006 17:37:11 +0200
+
+courier-authlib (0.58-3.1) unstable; urgency=medium
+
+  * Non-Maintainer Upload to fix security bug, caused by
+    /var/run/courier/authdaemon being world executable.  Thanks to Martin
+    Ferrari for the fix. (Closes: #378571)
+
+ -- Margarita Manterola <marga@debian.org>  Tue,  1 Aug 2006 16:45:07 -0300
+
+courier-authlib (0.58-3) unstable; urgency=low
+
+  * remove all Courier runtime files on purge of courier-authdaemon
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue,  6 Jun 2006 04:48:20 +0200
+
+courier-authlib (0.58-2) unstable; urgency=low
+
+  * set ownership of /var/run/courier and /var/run/courier/authdaemon to
+    daemon.daemon (Closes: #368358, #368360)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 23 May 2006 09:43:15 +0200
+
+courier-authlib (0.58-1.0) unstable; urgency=low
+
+  * first upload to unstable
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri, 12 May 2006 16:53:38 +0200
+
+courier-authlib (0.58-0.4) experimental; urgency=low
+
+  * changed alternative dependency for libmysqlclient-dev to
+    libmysqlclient15-dev (Closes: #356728, thanks to Stefan Huehner
+    <huehner@unix-ag.uni-kl.de> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 14 Mar 2006 11:14:11 +0100
+
+courier-authlib (0.58-0.3) experimental; urgency=low
+
+  * courier-authlib-userdb conflicts with pre-authlib courier-base package
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Wed, 11 Jan 2006 09:33:10 +0100
+
+courier-authlib (0.58-0.2) experimental; urgency=low
+
+  * updated config.{guess,sub} to avoid FTBFS on some architectures
+    (Closes: #346105, thanks to Petr Salinger
+    <Petr.Salinger@t-systems.cz>)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri,  6 Jan 2006 11:13:19 +0100
+
+courier-authlib (0.58-0.1) experimental; urgency=low
+
+  * new upstream release
+  * transition to new PostgreSQL architecture (Closes: #339297, thanks to
+    Martin Pitt <mpitt@debian.org> for the report and the patch)
+  * added courier-authlib-mysql/postgresql prerm/postinst scripts to
+    restart courier-authdaemon
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Thu,  5 Jan 2006 14:58:19 +0100
+
+courier-authlib (0.57.20051004-2) experimental; urgency=low
+
+  * ship configuration files with sane ownership/permissions
+  * restoring call to pam_acct_mgmt
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri, 11 Nov 2005 00:49:19 +0100
+
+courier-authlib (0.57.20051004-1) experimental; urgency=low
+
+  * new upstream release:
+    - contains authtest manual page and authpasswd script
+  * keep authtest name instead of renaming to courierauthtest, there are
+    currently no conflicts with other binaries
+  * separate package courier-authlib-pipe for authpipe module
+  * revive courier-authdaemon package to allow seamless upgrades from sarge
+  * changed FSF address in copyright file
+  * changed BuildDepends from libmysqlclient10-dev to libmysqlclient14-dev
+  * use DH_COMPAT=4
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 25 Oct 2005 11:04:45 +0200
+
+courier-authlib (0.56-0.5) experimental; urgency=low
+
+  * added build dependency on procps (Closes: #311976, thanks to Kurt
+    Roeckx <kurt@roeckx.be> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Sat,  4 Jun 2005 22:03:43 +0200
+
+courier-authlib (0.56-0.4) experimental; urgency=low
+
+  * provide proper LDAP configuration file instead of an empty one (thanks
+    to Peter Mann <Peter.Mann@tuke.sk> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 31 May 2005 14:48:04 +0200
+
+courier-authlib (0.56-0.3) experimental; urgency=low
+
+  * added dependency to courier-authlib-dev on courier-authlib
+  * versioned dependencies for courier-authlib-* packages
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Tue, 31 May 2005 11:13:01 +0200
+
+courier-authlib (0.56-0.2) experimental; urgency=low
+
+  * removed check for openssl binary (Closes: #311175, thanks to Kenshi
+    Muto <kmuto@debian.org> for the report)
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Mon, 30 May 2005 13:23:02 +0200
+
+courier-authlib (0.56-0.1) experimental; urgency=low
+
+  * initial release
+
+ -- Stefan Hornburg (Racke) <racke@linuxia.de>  Fri, 27 May 2005 23:20:21 +0200

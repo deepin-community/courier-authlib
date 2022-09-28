@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_mkhomedir</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-getuserinfo" title="auth_mkhomedir"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-getuserinfo" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_mkhomedir — Autocreate a new account's home directory</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauth.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef">int rc=<strong>auth_mkhomedir</strong>(</code></td><td rowspan="1" colspan="1">struct authinfo *<var class="pdparam">auth</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_mkhomedir_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+      A <em class="replaceable"><code>callback_func</code></em> that's passed as a parameter
+      to
+      <a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>
+      can invoke this function to automatically create a new account's
+      home directory, if the authlib client is running as root, forwarding
+      the <code class="classname">authinfo</code> pointer from the callback.
+    </p><p>
+      <code class="function">auth_mkhomedir</code>() checks if the
+      <code class="envar">AUTH_MKHOMEDIR_SKEL</code> environment variable is set, and
+      if the authenticated account's home directory does not exist.
+      If the environment variable is set it must point to a directory like
+      <code class="filename">/etc/skel</code> that contains a template for the
+      contents of a new account's home directory.
+    </p><p>
+      If <code class="envar">AUTH_MKHOMEDIR_SKEL</code> is not set, or if the home
+      directory exists,
+      <code class="function">auth_mkhomedir</code>() does nothing and returns 0.
+      Otherwise the account's home directory gets created, and
+      the contents of the <code class="envar">AUTH_MKHOMEDIR_SKEL</code>
+      directory get recursively copied into the new home directory.
+      The permissions of <code class="envar">AUTH_MKHOMEDIR_SKEL</code> and its contents
+      are preserved, and the owner userid and groupid is set to the
+      authenticated account's userid and groupid.
+    </p></div><div class="refsect1"><a id="auth_mkhomedir_returns" shape="rect"> </a><h2>RETURNS</h2><p>
+      <code class="function">auth_mkhomedir</code>() returns a non-zero value if
+      an error occured while creating the new account's home directory.
+      <code class="function">auth_mkhomedir</code>() returns zero if the new
+      account's home directory was created successfully, or if the
+      account's home directory already exists.
+    </p></div><div class="refsect1"><a id="auth_mkhomedir_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>.</p></div></div></body></html>

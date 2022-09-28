@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>authlib</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#authlib" title="authlib"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="authlib" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>authlib — Courier Authentication Library</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">courierauthconfig</code>  [[--ldflags] |  [--cppflags]]</p></div></div><div class="refsect1"><a id="authlib_descr" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+The Courier authentication library consists of two libraries:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">-lcourierauth</code></span></dt><dd><p>
+Authentication functions.</p></dd><dt><span class="term"><code class="literal">-lcourierauthsasl</code></span></dt><dd><p>
+SASL authentication functions.</p></dd></dl></div><p>
+<span class="command"><strong>courierauthconfig --cppflags</strong></span> produces on standard output
+any necessary compiler flags that are needed to access
+the <code class="filename">courierauth.h</code> and
+the <code class="filename">courierauthsasl.h</code> header files.
+<span class="command"><strong>courierauthconfig --ldflags</strong></span> produces on standard output
+any necessary compiler flags that are needed to link against
+the <code class="filename">courierauth</code> or <code class="filename">courierauthsasl</code>
+libraries.</p></div><div class="refsect1"><a id="authlib_seealso" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="auth_meta.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_login.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_enumerate.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_enumerate</span>(3)</span></a>,
+
+<a class="ulink" href="auth_mkhomedir.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_mkhomedir</span>(3)</span></a>,
+
+<a class="ulink" href="auth_passwd.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_passwd</span>(3)</span></a>,
+
+<a class="ulink" href="auth_sasl.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_sasl</span>(3)</span></a>.</p></div></div></body></html>

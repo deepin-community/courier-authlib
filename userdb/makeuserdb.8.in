@@ -1,0 +1,334 @@
+'\" t
+.\"  <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+.\"  <!-- distribution information. -->
+.\"     Title: makeuserdb
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 10/28/2020
+.\"    Manual: Double Precision, Inc.
+.\"    Source: Double Precision, Inc.
+.\"  Language: English
+.\"
+.TH "MAKEUSERDB" "8" "10/28/2020" "Double Precision, Inc." "Double Precision, Inc."
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+makeuserdb \- create @userdb@
+.SH "SYNOPSIS"
+.HP \w'\fBmakeuserdb\fR\ 'u
+\fBmakeuserdb\fR [\-f\ \fIfilename\fR]
+.HP \w'\fBpw2userdb\fR\ 'u
+\fBpw2userdb\fR
+.HP \w'\fBvchkpw2userdb\fR\ 'u
+\fBvchkpw2userdb\fR [\-\-vpopmailhome=\fIdir\fR] [\-\-todir=\fIdir\fR]
+.SH "DESCRIPTION"
+.PP
+\fBmakeuserdb\fR
+creates
+@userdb@\&.dat
+from the contents of
+@userdb@\&.
+@userdb@\*(Aqs contents are described later in this document\&.
+Maildrop,
+Courier, and other applications use
+@userdb@\&.dat
+as a substitute/complement for your system password file\&. The usual purpose for
+@userdb@\&.dat
+is to specify "virtual" accounts \- accounts that do not have an associated system login\&. Usually (but not necessarily) all virtual accounts share the same system userid\&.
+@userdb@\&.dat
+may also replace your system password file\&. Because the system password file is a text file, when there\*(Aqs a large number of accounts it will be significantly faster to search
+@userdb\&.dat@, which is a binary database, instead of a flat text file that the system password file usually is\&.
+.PP
+The
+\fBmakeuserdb\fR
+command can be safely executed during normal system activity\&.
+.PP
+The
+\fB\-f\fR
+option creates
+\fIfilename\fR\&.dat
+from
+\fIfilename\fR, instead of the default
+@userdb@\&.dat
+from
+@userdb@\&.
+.SS "Format of @userdb@"
+.PP
+@userdb@
+is a plain text file that can be created using any text editor\&. Blank lines are ignored\&. Lines that start with the # character are comments, and are also ignored\&. Other lines define properties of a single "account", one line per account\&.
+@userdb@
+may be a directory instead of a plain file\&. In that case all files in
+@userdb@
+are essentially concatenated, and are treated as a single file\&. Each line takes the following format:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fIname\fR<TAB>\fIfield\fR=\fIvalue\fR|\fIfield\fR=\fIvalue\fR\&.\&.\&.
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fIname\fR
+is the account name\&.
+\fIname\fR
+MUST contain only lowercase characters If
+Courier
+is configured to treat lowercase and uppercase account names as identical,
+\fIname\fR
+is followed by exactly one tab character, then a list of field/value pairs separated by vertical slashes\&.
+\fIfield\fR
+is the name of the field,
+\fIvalue\fR
+is the field value\&. Fields and values themself cannot contain slashes or control characters\&. Fields may be specified in any order\&. Here are all the currently defined fields\&. Note that not every field is used by every application that reads
+@userdb@\&.dat\&.
+.PP
+\fIuid\fR
+\-
+\fIvalue\fR
+is a (possibly) unique numerical user ID for this account\&.
+.PP
+\fIgid\fR
+\-
+\fIvalue\fR
+is a (possibly) unique numerical group ID for this account\&.
+.PP
+\fIhome\fR
+\-
+\fIvalue\fR
+is the account\*(Aqs home directory\&.
+.PP
+\fIshell\fR
+\-
+\fIvalue\fR
+is the account\*(Aqs default login shell\&.
+.PP
+\fIsystempw\fR
+\-
+\fIvalue\fR
+is the account\*(Aqs password\&. See
+\m[blue]\fB\fBuserdbpw\fR(8)\fR\m[]\&\s-2\u[1]\d\s+2
+for details on how to set up this field\&.
+.PP
+\fIpop3pw, esmtppw, imappw\&.\&.\&.\fR
+\-
+\fIvalue\fR
+specifies a separate password used only for authenticating access using a specific service, such as POP3, IMAP, or anything else\&. If not defined,
+\fIsystempw\fR
+is always used\&. This allows access to an account to be restricted only to certain services, such as POP3, even if other services are also enabled on the server\&.
+.PP
+\fImail\fR
+\-
+\fIvalue\fR
+specifies the location of the account\*(Aqs Maildir mailbox\&. This is an optional field that is normally used when
+\fBuserdb\fR
+is used to provide aliases for other mail accounts\&. For example, one particular multi\-domain E\-mail service configuration that\*(Aqs used by both
+Qmail
+and
+Courier
+servers is to deliver mail for a mailbox in a virtual domain, such as "user@example\&.com", to a local mailbox called "example\-user"\&. Instead of requiring the E\-mail account holder to log in as "example\-user" to download mail from this account, a
+\fBuserdb\fR
+entry for "user@example\&.com" is set up with
+\fImail\fR
+set to the location of example\-user\*(Aqs Maildir mailbox, thus hiding the internal mail configuration from the E\-mail account holder\*(Aqs view\&.
+.PP
+\fIquota\fR
+\-
+\fIvalue\fR
+specifies the maildir quota for the account\*(Aqs Maildir\&. This has nothing to do with actual filesystem quotas\&.
+Courier
+has a software\-based Maildir quota enforcement mechanism which requires additional setup and configuration\&. See
+\m[blue]\fB\fBmaildirquota\fR(7)\fR\m[]\&\s-2\u[2]\d\s+2
+for additional information\&.
+.SS "@userdb@shadow\&.dat"
+.PP
+All fields whose name ends with \*(Aqpw\*(Aq will NOT copied to
+@userdb@\&.dat\&. These fields will be copied to
+@userdb@shadow\&.dat\&.
+\fBmakeuserdb\fR
+creates
+@userdb@shadow\&.dat
+without any group and world permissions\&. Note that
+\fBmakeuserdb\fR
+reports an error if
+\fB@userdb@\fR
+has any group or world permissions\&.
+.SS "CONVERTING /etc/passwd and vpopmail to @userdb@ format"
+.PP
+\fBpw2userdb\fR
+reads the
+/etc/passwd
+and
+/etc/shadow
+files and converts all entries to the
+@userdb@
+format, printing the result on standard output\&. The output of
+\fBpw2userdb\fR
+can be saved as
+\fB@userdb@\fR
+(or as some file in this subdirectory)\&. Linear searches of
+/etc/passwd
+can be very slow when you have tens of thousands of accounts\&. Programs like
+\fBmaildrop\fR
+always look in
+@userdb@
+first\&. By saving the system password file in
+@userdb@
+it is possible to significantly reduce the amount of time it takes to look up this information\&.
+.PP
+After saving the output of
+\fBpw2userdb\fR, you must still run
+\fBmakeuserdb\fR
+to create
+@userdb@\&.dat\&.
+.PP
+\fBvchkpw2userdb\fR
+converts a vpopmail\-style directory hierarchy to the
+@userdb@
+format\&. This is an external virtual domain management package that\*(Aqs often used with
+Qmail
+servers\&.
+.PP
+Generally, an account named \*(Aqvpopmail\*(Aq is reserved for this purpose\&. In that account the file
+users/vpasswd
+has the same layout as
+/etc/passwd, and performs a similar function, except that all userid in
+users/vpasswd
+have the same userid\&. Additionally, the
+domains
+subdirectory stores virtual accounts for multiple domains\&. For example,
+domains/example\&.com/vpasswd
+has the passwd file for the domain
+\fIexample\&.com\fR\&. Some systems also have a soft link,
+\fIdomains/default\fR, that points to a domain that\*(Aqs considered a "default" domain\&.
+.PP
+The
+\fBvchkpw2userdb\fR
+reads all this information, and tries to convert it into the
+@userdb@
+format\&. The
+\fI\-\-vpopmailhost\fR
+option specifies the top level directory, if it is not the home directory of the vpopmail account\&.
+.PP
+The
+\fBvchkpw2userdb\fR
+script prints the results on standard output\&. If specified, the
+\fI\-\-todir\fR
+option tries to convert all
+vpasswd
+files one at a time, saving each one individually in
+\fIdir\fR\&. For example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+mkdir @userdb@
+vchkpw2userdb \-\-todir=@userdb@/vpopmail
+makeuserdb
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+It is still necessary to run
+\fBmakeuserdb\fR, of course, to create the binary database file
+@userdb@\&.dat
+.PP
+NOTE: You are still required to create the
+\fB@userdb@\fR
+entry which maps system userids back to accounts, "\fIuid\fR=<TAB>\fIname\fR", if that\*(Aqs applicable\&.
+\fBvchkpw2userdb\fR
+will not do it for you\&.
+.PP
+NOTE:
+\fBmakeuserdb\fR
+may complain about duplicate entries, if your "default" entries in
+users/vpasswd
+or
+domains/default/vpasswd
+are the same as anything in any other
+@userdb@
+file\&. It is also likely that you\*(Aqll end up with duplicate, but distinct, entries for every account in the default domain\&. For example, if your default domain is example\&.com, you\*(Aqll end up with duplicate entries \- you\*(Aqll have entries for both
+\fIuser\fR
+and
+\fIuser@example\&.com\fR\&.
+.PP
+If you intend to maintain the master set of accounts using vchkpw/vpopmail, in order to avoid cleaning this up every time, you might want to consider doing the following: run
+\fBvchkpw2userdb\fR
+once, using the
+\fI\-\-todir\fR
+option\&. Then, go into the resulting directory, and replace one of the redundant files with a soft link to
+/dev/null\&. This allows you to run
+\fBvchkpw2userdb\fR
+without having to go in and cleaning up again, afterwards\&.
+.SH "FILES"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+@userdb@
+@userdb@\&.dat
+@userdb@shadow\&.dat
+@tmpdir@/userdb\&.tmp \- temporary file
+@tmpdir@/userdbshadow\&.tmp \- temporary file
+.fi
+.if n \{\
+.RE
+.\}
+.SH "BUGS"
+.PP
+\fBmakeuserdb\fR
+is a Perl script, and uses Perl\*(Aqs portable locking\&. Perl\*(Aqs documentation notes that certain combinations of locking options may not work with some networks\&.
+.SH "SEE ALSO"
+.PP
+\m[blue]\fB\fBuserdb\fR(8)\fR\m[]\&\s-2\u[3]\d\s+2,
+\m[blue]\fB\fBmaildrop\fR(8)\fR\m[]\&\s-2\u[4]\d\s+2,
+\m[blue]\fB\fBcourier\fR(8)\fR\m[]\&\s-2\u[5]\d\s+2,
+\m[blue]\fB\fBmaildirquota\fR(7)\fR\m[]\&\s-2\u[2]\d\s+2\&.
+.SH "NOTES"
+.IP " 1." 4
+\fBuserdbpw\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/userdbpw.html
+.RE
+.IP " 2." 4
+\fBmaildirquota\fR(7)
+.RS 4
+\%[set $man.base.url.for.relative.links]/maildirquota.html
+.RE
+.IP " 3." 4
+\fBuserdb\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/userdb.html
+.RE
+.IP " 4." 4
+\fBmaildrop\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/maildrop.html
+.RE
+.IP " 5." 4
+\fBcourier\fR(8)
+.RS 4
+\%[set $man.base.url.for.relative.links]/courier.html
+.RE

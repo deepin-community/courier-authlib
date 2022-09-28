@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>userdbpw</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#userdbpw" title="userdbpw"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="userdbpw" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>userdbpw — create an encrypted password</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">userdbpw</code>  [[-md5] |  [-hmac-md5] |  [-hmac-sha1]]  | <br clear="none"/><code class="command">userdb</code>  {<em class="replaceable"><code>name</code></em>}  set  {<em class="replaceable"><code>field</code></em>}</p></div></div><div class="refsect1"><a id="userdbpw_description" shape="rect"> </a><h2>DESCRIPTION</h2><p><span class="command"><strong>userdbpw</strong></span> enables secure entry of encrypted
+passwords into <code class="filename">@userdb@</code>.</p><p><span class="command"><strong>userdbpw</strong></span> reads a single line of text on
+standard input, encrypts it, and prints the encrypted result to standard
+output.</p><p>If standard input is attached to a terminal device,
+<span class="command"><strong>userdbpw</strong></span> explicitly issues a "Password: " prompt on
+standard error, and turns off echo while the password is entered.</p><p>The <code class="option">-md5</code> option is available on systems that use
+MD5-hashed passwords (such as systems that use the current version of the
+PAM library for authenticating, with MD5 passwords enabled).
+This option creates an MD5 password hash, instead of using the
+traditional <code class="function">crypt()</code> function.</p><p><code class="option">-hmac-md5</code> and <code class="option">-hmac-sha1</code> options
+are available only if the userdb library is installed by an application
+that uses a challenge/response authentication mechanism.
+<code class="option">-hmac-md5</code> creates an intermediate HMAC context using the
+MD5 hash function. <code class="option">-hmac-sha1</code> uses the SHA1 hash function
+instead. Whether either HMAC function is actually available depends on the
+actual application that installs the <code class="option">userdb</code> library.</p><p>Note that even though the result of HMAC hashing looks like an encrypted
+password, it's really not.  HMAC-based challenge/response authentication
+mechanisms require the cleartext password to be available as cleartext.
+Computing an intermediate HMAC context does scramble the cleartext password,
+however if its compromised, it WILL be possible for an attacker to succesfully
+authenticate.  Therefore, applications that use challenge/response
+authentication will store intermediate HMAC contexts in the "pw" fields in the
+userdb database, which will be compiled into the
+<code class="filename">userdbshadow.dat</code>
+database, which has group and world permissions turned off. The
+userdb library also requires that the cleartext userdb source for the
+<code class="filename">userdb.dat</code> and
+<code class="filename">userdbshadow.dat</code> databases is also stored with the
+group and world permissions turned off.</p><p><span class="command"><strong>userdbpw</strong></span> is usually used together in a pipe with
+<span class="command"><strong>userdb</strong></span>, which reads from standard input. For example:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><pre class="programlisting" xml:space="preserve"><span class="command"><strong>userdbpw -md5 | userdb users/john set systempw</strong></span></pre></div></blockquote></div><p>or:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><pre class="programlisting" xml:space="preserve"><span class="command"><strong>userdbpw -hmac-md5 | userdb users/john set hmac-md5pw</strong></span></pre></div></blockquote></div><p>These commands set the <code class="option">systempw</code> field in the record for
+the user <code class="option">john</code> in <code class="filename">@userdb@/users</code> file, and the
+<code class="option">hmac-md5pw</code> field. Don't forget to run
+<span class="command"><strong>makeuserdb</strong></span> for the change to take effect.</p><p>The following command does the same thing:</p><div class="blockquote"><blockquote class="blockquote"><div class="informalexample"><pre class="programlisting" xml:space="preserve"><span class="command"><strong>userdb users/john set systempw=<code class="option">SECRETPASSWORD</code></strong></span></pre></div></blockquote></div><p>However, this command passes the secret password as an argument to the
+<span class="command"><strong>userdb</strong></span> command, which can be viewed by anyone who happens
+to run
+<span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span>
+at the same time. Using <span class="command"><strong>userdbpw</strong></span> allows the secret password
+to be specified in a way that cannot be easily viewed by
+<span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span>.</p></div><div class="refsect1"><a id="userdbpw_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="userdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">userdb</span>(8)</span></a>,
+ 
+<a class="ulink" href="makeuserdb.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">makeuserdb</span>(8)</span></a></p></div></div></body></html>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>auth_enumerate</title><link rel="stylesheet" type="text/css" href="style.css"/><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"/><link rel="home" href="#auth-enumerate" title="auth_enumerate"/><link xmlns="" rel="stylesheet" type="text/css" href="manpage.css"/><meta xmlns="" name="MSSmartTagsPreventParsing" content="TRUE"/><link xmlns="" rel="icon" href="icon.gif" type="image/gif"/><!--
+
+Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for distribution
+information.
+
+--></head><body><div class="refentry"><a id="auth-enumerate" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>auth_enumerate — Obtain list of accounts</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="literallayout"><p><br clear="none"/>
+#include &lt;courierauth.h&gt;<br clear="none"/>
+</p></div><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td rowspan="1" colspan="1"><code class="funcdef"><strong>auth_enumerate</strong>(</code></td><td rowspan="1" colspan="1">int <var class="pdparam">(*callback_func)</var>
+              <code>(</code>const char *, uid_t, gid_t, const char *, const char *, const char *, void *<code>)</code>, </td></tr><tr><td rowspan="1" colspan="1"> </td><td rowspan="1" colspan="1">void *<var class="pdparam">callback_arg</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a id="auth_enumerate_description" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+<code class="function">auth_enumerate</code> enumerates all of the available accounts.
+<code class="function">auth_enumerate</code> repeatedly calls
+<code class="function">callback_func</code>, once for each account.
+<code class="function">callback_func</code> receives the following arguments:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+Account name.</p></li><li class="listitem"><p>
+Account's numeric userid.</p></li><li class="listitem"><p>
+Account's numeric groupid.</p></li><li class="listitem"><p>
+Account's home directory.</p></li><li class="listitem"><p>
+Account's mailbox (if defined, may be <code class="literal">NULL</code>, which
+indicates the default mailbox location).</p></li><li class="listitem"><p>
+Account's options string (if defined, may be <code class="literal">NULL</code>)</p></li><li class="listitem"><p>
+<em class="parameter"><code>callback_arg</code></em>, verbatim.</p></li></ul></div><p>
+After invoking <code class="function">callback_func</code> for the last account,
+<code class="function">auth_enumerate</code> invokes <code class="function">callback_func</code>
+one more time with all parameters set to <code class="literal">NULL</code> or 0.</p><p>
+If <code class="function">auth_enumerate</code> encounters an error it will terminate
+without calling <code class="function">callback_func</code> with all
+<code class="literal">NULL</code> or 0 parameters.
+This can be used to determine whether a partial list of accounts was
+received.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+Some back-end Courier authentication modules do not implement account
+enumeration, so this function may not be available in all
+configurations.</p></div></div><div class="refsect1"><a id="auth_enumerate_see_also" shape="rect"> </a><h2>SEE ALSO</h2><p>
+<a class="ulink" href="authlib.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">authlib</span>(3)</span></a>,
+ 
+<a class="ulink" href="auth_generic.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_generic_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_login.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_login_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_getuserinfo.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_getuserinfo_meta</span>(3)</span></a>,
+
+<a class="ulink" href="auth_passwd.html" target="_top" shape="rect"><span class="citerefentry"><span class="refentrytitle">auth_passwd</span>(3)</span></a>.</p></div></div></body></html>
